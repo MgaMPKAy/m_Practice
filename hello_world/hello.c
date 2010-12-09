@@ -1,5 +1,5 @@
 /* hello.c
- * Copyright (C) adlezz 2010 <mgampkay@163.com>
+ * Copyright (C) mgampkay 2010 <mgampkay@163.com>
  * 
  * hello.c is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
