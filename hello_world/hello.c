@@ -1,12 +1,12 @@
 /* hello.c
  * Copyright (C) adlezz 2010 <mgampkay@163.com>
  * 
- * hello is free software: you can redistribute it and/or modify it
+ * hello.c is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * foobar-sample is distributed in the hope that it will be useful, but
+ * hello.c is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
