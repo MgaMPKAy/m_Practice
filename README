@@ -1,4 +1,6 @@
 这里存放的大部分在我的博客里提及的代码。
 
 目前有：
-hello.c  -> hello,world
+hello_world
+  hello.c  -> 纯粹的hello,world
+  hello_girls -> 广工女生节前夜弄的
