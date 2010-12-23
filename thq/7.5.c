@@ -5,7 +5,7 @@ int main(void)
     int arr[N] = {8, 6, 5, 4, 1, 0, 1, 2, 3};
     int i, j, t;
 
-    for (i = 0, j = N - 1; i < (N - 1) / 2; i++, j--){
+    for (i = 0, j = N - 1; i < j; i++, j--){
 	t = arr[i];
 	arr[i] = arr[j];
 	arr[j] = t;

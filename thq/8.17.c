@@ -3,21 +3,24 @@
 
 int main(void)
 {
-    long num;
-    int i, j,t;
+    long n;
+    int i, j, t, s;
     char str[80] = {0};
     
     printf("Enter a int: ");
-    scanf("%ld", &num);
-
-    for (i = 0; ;){
-	str[i++] = num % 10 + '0';
-	if (num < 10) break;
-	else num = (num - num % 10) / 10;
-    }
+    scanf("%ld", &n);
+    
+    if ((s = n) < 0)
+	n = -n;
+    i = 0;
+    do {
+	str[i++] = n % 10 + '0';
+    } while((n /= 10) > 0);
+    if (s < 0)
+	str[i++] = '-';
     str[i] = '\0';
     
-    for (i = 0, j = strlen(str) - 1; i < strlen(str) / 2; i++, j--){
+    for (i = 0, j = strlen(str) - 1; i < j; i++, j--){
 	t = str[i];
 	str[i] = str[j];
 	str[j] = t;

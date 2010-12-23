@@ -10,7 +10,7 @@ int main(void)
 	scanf("%ld", &num);
 
 	
-	for (tmp = num; ;tmp = (tmp - tmp % 10)/10){
+	for (tmp = num; ;tmp /= 10 ){
 		printf("第%d位是%ld\n", wei, tmp % 10);
 		arr[wei-1] = tmp % 10;
 		if (tmp < 10) break;

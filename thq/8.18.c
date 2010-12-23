@@ -21,7 +21,7 @@ void get_input(int *year, int *month, int *day)
     scanf("%d", month);
     printf("Enter day:");
     scanf("%d", day);
-
+    
     // cheak error!!
 }
 
@@ -43,10 +43,10 @@ int days(int year, int month, int day)
 int main(void)
 {
     int year, month, day;
-
+    
     get_input(&year, &month, &day);
-
+    
     printf("%d\n", days(year, month, day));
-
+    
     return 0;
 }

@@ -3,11 +3,10 @@
 
 char *reverse(char *str)
 {
-    int i, j, s;
+    int i, j;
     char t;
-    s = strlen(str);
 
-    for (i = 0, j = s - 1; i < s / 2; i++, j--){
+    for (i = 0, j = strlen(str) - 1; i < j; i++, j--){
 	t = str[i];
 	str[i] = str[j];
 	str[j] = t;

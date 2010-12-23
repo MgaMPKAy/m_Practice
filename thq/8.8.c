@@ -3,7 +3,7 @@
 void split(int n)
 {
     int arr[10], i;
-    for (i = 0;; n = (n - n % 10) / 10){
+    for (i = 0;; n /= 10){
 	arr[i++] = n  % 10;
 	if (n < 10) break;
     }
