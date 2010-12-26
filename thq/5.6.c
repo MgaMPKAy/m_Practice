@@ -10,7 +10,7 @@ int main(void)
 		printf("too large\n");
 		return -1;
 	}
-	switch((score - score % 10) /10){
+	switch((score /= 10){
 	case 10:
 	case 9:
 		printf("A\n"); break;
