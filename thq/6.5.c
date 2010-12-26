@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define N 20
+
 int main(void)
 {
         double sum = 0, i = 0;

@@ -1,5 +1,5 @@
 #include <stdio.h>
-/*都不知到答案那个有什么用 */
+/*都不知到答案那个做法有什么用 */
 void itoa(int num, char *str)
 {
     int n = num, w = 1;
