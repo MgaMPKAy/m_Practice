@@ -3,26 +3,26 @@
 
 int isprime(int num)
 {
-    int i, sq;
-    sq = sqrt(num) + 1;
-    for (i = 2; i < sq; i++){
-	if (0 == num % i)
-	    return 0;
-	else
-	    continue;
-    }
-    return 1;
+	int i, sq;
+	sq = sqrt(num) + 1;
+	for (i = 2; i < sq; i++){
+		if (0 == num % i)
+			return 0;
+		else
+			continue;
+	}
+	return 1;
 }
 
 int main(void)
 {
-    int n;
-    printf("Enter a int:");
-    scanf("%d", &n);
-    if (isprime(n))
-	printf("Prime\n");
-    else
-	printf("Not Prime\n");
-
-    return 0;
+	int n;
+	printf("Enter a int:");
+	scanf("%d", &n);
+	if (isprime(n))
+		printf("Prime\n");
+	else
+		printf("Not Prime\n");
+	
+	return 0;
 }
