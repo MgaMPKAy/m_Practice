@@ -3,7 +3,7 @@
 
 int isprime(int num)
 {
-	int i, sq;
+	long i, sq;
 	sq = sqrt(num) + 1;
 	for (i = 2; i < sq; i++){
 		if (0 == num % i)
@@ -14,13 +14,15 @@ int isprime(int num)
 
 int main(void)
 {
-	int n;
-	printf("Enter a int:");
-	scanf("%d", &n);
-	if (isprime(n))
-		printf("Prime\n");
-	else
-		printf("Not Prime\n");
-	
+	int s = 0;
+	long i;
+	for (i = 2; i < 100000000; i++){
+		if (isprime(i))
+			s++;
+		if(s == 10001){
+			printf("%ld\n", i);
+			break;
+		}
+	}
 	return 0;
 }
