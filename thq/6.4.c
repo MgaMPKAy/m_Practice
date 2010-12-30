@@ -2,7 +2,7 @@
 #define N 20
 int main(void)
 {
-        long fac, sum = 0;
+        double fac, sum = 0;
 	int i, j;
 	
 	for(i = fac = 1; i <= N; i++){
@@ -13,6 +13,6 @@ int main(void)
 		fac = 1;
 	}
 
-	printf("sum = %ld\n", sum);
+	printf("sum = %f\n", sum);
 }
 			    
