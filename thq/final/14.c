@@ -119,7 +119,7 @@ void stat(void)
 {
 	int i, a, b, c, d, e;
 	float sum;
-	a = b = c = d = e = 0; // global
+	a = b = c = d = e = 0;
 	printf("\nA:\n");
 	for (i = 0; i < top; i++){
 		if (score_arr[i] >= 90){
