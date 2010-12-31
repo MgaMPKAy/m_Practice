@@ -371,7 +371,7 @@ long get_id(const char * str)
 	return id;
 }
 
-/* 要改用stdlib的qsort?*/
+/* 可以改用stdlib的qsort?*/
 void isort_num(link head)
 {
 	link tail = head, iter, min, tmp, pre;
@@ -379,4 +379,5 @@ void isort_num(link head)
 	while (tail->next != NULL){
 		tail = tail->next;
 	}
+	
 }

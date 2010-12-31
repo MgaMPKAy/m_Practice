@@ -179,7 +179,7 @@ void retrieve_all(void)
 
 int get_choice(const char * str)
 {
-
+	
 	int choice = -1;
 	int c;
 	printf("%s", str);
@@ -193,11 +193,11 @@ short get_score(const char * str)
 {
 	short score = 0;
 	int c;
-	do {
+	while (score <= 0){
 		printf("%s", str);
 		scanf("%hd", &score);
 		while((c = getchar()) != '\n' && c != EOF);
-	} while (score <= 0);
+	}
 	return score;
 }
 
