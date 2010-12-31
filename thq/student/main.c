@@ -38,9 +38,9 @@ link modify(long id, char * name, float engl,
 void load(link head);
 void save(link head);
 link last(link head);
-void qsort_num(link head);
-void qsort_name(link head);
-void qsort_aver(link head);
+void isort_num(link head);
+void isort_name(link head);
+void isort_aver(link head);
 
 
 
@@ -80,7 +80,7 @@ void menu_main(void)
 	printf("* 3. Delete   4. Modify \n");
 	printf("* 5. Sort     6. Save \n");
 	printf("* 7. Load     8. Exit \n");
-	/* 避免意外输入字符进入无限循环, 独立出一个函数*/
+	/* 避免意外输入字符进入无限循环, 独立出一个函数get_choice*/
 	while (choice < 1 || choice > 8){
 		choice = get_choice("Please choice (1 ~ 8): ", 1);
 	}
@@ -329,3 +329,25 @@ long get_id(const char * str)
 	}
 	return id;
 }
+
+/* 要改用stdlib的qsort */
+void isort_num(link head)
+{
+	link tail = head, iter, min, tmp, pre;
+	/* get last node */
+	while (tail->next! = NULL){
+		tail = tail->next;
+	}
+
+	while(head != tail){
+		iter = head; min = iter;
+		while (iter != tail){
+			if (iter->next->id < min->id){
+				pre = iter;
+				min = iter->next;
+			}
+			iter = iter->next;
+		}
+
+		
+				

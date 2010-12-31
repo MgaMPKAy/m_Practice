@@ -3,7 +3,7 @@
 
 int main(void)
 {
-	int arr[N], i, j, n;
+	int arr[N], i, j, n, m, flag = 0;
 
 	for (i = 0; i < N; i++){
 		arr[i] = 2 * (15 - i);
@@ -13,19 +13,24 @@ int main(void)
 	scanf("%d", &n);
 
 	if ( n > arr[0] || n < arr[N-1]){
-		printf("No\n");
+		printf("Doesn't exist\n");
 		return 0;
 	}
-	for (i = 0, j = N - 1; i < j;){
-		if (n > arr[(i + j) / 2])
-			i = (i + j) / 2;
-		else if (n < arr[(i + j) /2])
-			j = (i + j) / 2;
-		else
+	for (i = 0, j = N; j - i >= 1; ){
+		m = (i + j) / 2;
+		if (n == arr[m]){
+			flag = 1;
 			break;
+		}
+		else if (n > arr[m])
+			j = m;
+		else 
+			i = m;
 	}
 
-	if (n == arr[(i+j)/2])
-		printf("%d\n", arr[(i+j)/2]);
+	if (flag)
+		printf("%d exits, %d\n", n, m + 1) ;
+	else
+		printf("%d doesn't exixt\n", n);
 	return 0;
 }
