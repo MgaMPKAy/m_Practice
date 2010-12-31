@@ -154,14 +154,16 @@ void menu_add(void)
 	else {
 		add(id, name, engl, comp, math, head);
 	}
+	// getchar();
+	// 停下来，要在main_menu的最后清空缓冲区
 }
 
 link
 add(long id, char* name, float engl,
     float comp, float math, link head)
 {
-	/* typedef unsignel short long -> ul us ?*/
-	/* 整个结构体作为参数，简单，但和add_menu太xx */
+
+	/* 如果用整个结构体作为参数 */
 	/* 注意参数顺序， 和结构体的里定义顺序一样 */
 	
 	link new = malloc(sizeof(struct node));
@@ -233,6 +235,7 @@ void menu_require(void)
 {
 	int choice = -1;
 	long id = -1;
+	link tmp;
 	while (1){
 		choice = -1;
 		printf("*********************Require Records *************************\n");
@@ -240,18 +243,23 @@ void menu_require(void)
 		printf("*          2.2  Require All the Records                      *\n");
 		printf("*          2.3  Back to MainMenu                             *\n");
 		printf("**************************************************************\n");
-		while( choice != 1 && choice != 2 && choice != 3)
+		while (!(choice >= 1 && choice <= 3))
 			choice = get_choice("Please select (0 ~ 3): ", 1);
 		switch (choice){
 		case 1:
 			id = get_id("Please Enter Student's ID: ");
-			require(find(id, head));
-			getchar();
+			if ((tmp = find(id, head))){
+				require(tmp);
+				get_choice("Press any key to continue ", 2);
+			}
+			else {
+				get_choice("No such student", 2);
+			}
 			system("clear");
 			break;
 		case 2:
 			require_all(head);
-			getchar();
+			get_choice("Press any key to continue ", 2);
 			system("clear");
 			break;
 		case 3:
@@ -272,7 +280,35 @@ void menu_modify(void)
 
 void menu_sort(void)
 {
-	
+	int choice = -1;
+
+	while (1){
+		choice = -1;
+		printf("*********************  Sort Records **************************\n");
+		printf("*          5.1  Sort Records by Num                          *\n");
+		printf("*          5.2  Sort Records by name                         *\n");
+		printf("*          5.3  Sort Records by Average Score                *\n");
+		printf("*          5.4  Back to MainMenu                             *\n");
+		printf("**************************************************************\n");
+		while (!(choice > 0 && choice < 5))
+			choice = get_choice("Please select (0 ~ 3): ", 1);
+		switch (choice){
+		case 1:
+			get_choice("Sorted ", 2);
+			system("clear");
+			break;
+		case 2:
+			get_choice("Sorted ", 2);
+			system("clear");
+			break;
+		case 3:
+			get_choice("Sorted ", 2);
+			system("clear");
+			
+		case 4:
+			return;
+		}
+	}
 }
 
 void menu_save(void)
@@ -284,12 +320,14 @@ void menu_load(void)
 {
 	
 }
-	
+
+/* TODO: 把scanf换成fgets+sscanf */
 int get_choice(const char * str, int mode)
 {
-	// mode : 0 -> char; 1->int;
+	// mode : 0 -> char; 1->int; 2->anything
 	// const 的用法 
 	int choice = 0, c;
+	char tmp[2];
 	printf("%s", str);
 	if (mode == 0){
 		choice = getchar();
@@ -299,11 +337,14 @@ int get_choice(const char * str, int mode)
 		scanf("%d", &choice);
 		while((c = getchar()) != '\n' && c != EOF);
 	}
-	
+	else {
+		fgets(tmp, 1, stdin);
+		while((c = getchar()) != '\n' && c != EOF);
+	}
 	return choice;
 }
 
-	
+
 float get_score(const char * str)
 {
 	// const 的用法 
@@ -330,24 +371,12 @@ long get_id(const char * str)
 	return id;
 }
 
-/* 要改用stdlib的qsort */
+/* 要改用stdlib的qsort?*/
 void isort_num(link head)
 {
 	link tail = head, iter, min, tmp, pre;
 	/* get last node */
-	while (tail->next! = NULL){
+	while (tail->next != NULL){
 		tail = tail->next;
 	}
-
-	while(head != tail){
-		iter = head; min = iter;
-		while (iter != tail){
-			if (iter->next->id < min->id){
-				pre = iter;
-				min = iter->next;
-			}
-			iter = iter->next;
-		}
-
-		
-				
+}
