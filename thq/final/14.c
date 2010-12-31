@@ -8,23 +8,23 @@ void menu_add(void);
 void menu_find(void);
 
 int get_choice(const char *str);
-unsigned long get_id(const char *str);
-unsigned short get_score(const char *str);
+long get_id(const char *str);
+short get_score(const char *str);
 
-void add(unsigned long id, unsigned short score);
-int find(unsigned long id);
+void add(long id, short score);
+int find(long id);
 void sort(void);
 void stat(void);
 void retrieve_all(void);
 
-unsigned long id_arr[N];
-unsigned short score_arr[N];
+long id_arr[N];
+short score_arr[N];
 int top;
 
 int main(void)
 {
 	while (!0){
-		system("clear");
+		system("clear");  // windows下改为system("cls")
 		menu_main();
 	}
 	return 0;
@@ -32,7 +32,7 @@ int main(void)
 
 void menu_main(void)
 {
-	int choice = -1;
+	int choice = -1, c;
 	while(1){
 		system("clear");
 		printf("-------------------Welcome---------------------\n");
@@ -52,6 +52,7 @@ void menu_main(void)
 		case 5: retrieve_all();break;
 		case 0: exit(EXIT_SUCCESS);
 		}
+		while((c = getchar()) != '\n' && c != EOF);
 	}
 	
 }
@@ -59,8 +60,8 @@ void menu_main(void)
 
 void menu_add(void)
 {
-	unsigned long id;
-	unsigned short score;
+	long id;
+	short score;
 	
 	if (top >= N - 1){
 		printf("Error: too many student\n");
@@ -83,13 +84,13 @@ void menu_add(void)
 
 void  menu_find(void)
 {
-	unsigned long id;
+        long id;
 	int i;
 	id = get_id("Enter student's id: ");
 
 	if ((i = find(id)) >= 0){
 		printf("Student    Score\n");
-		printf("%7ld     %4hd\n", id_arr[i], score_arr[i]);
+		printf("%7ld     %4d\n", id_arr[i], score_arr[i]);
 	}
 	else
 		printf("Error: no such student\n");
@@ -99,8 +100,8 @@ void  menu_find(void)
 
 void sort(void)
 {
-	unsigned short i, j , t_score;
-	unsigned long t_id;
+        short i, j , t_score;
+        long t_id;
 	for (i = 0; i < top; i++){
 		for(j = top - 1; j > 0; j--){
 			if (score_arr[j] > score_arr[j-1]){
@@ -171,7 +172,7 @@ void retrieve_all(void)
 	putchar('\n');
 	printf("Student    Score\n");
 	for (i = 0; i < top; i++){
-		printf("%7ld    %4hd\n", id_arr[i], score_arr[i]);			  				
+		printf("%7ld    %4d\n", id_arr[i], score_arr[i]);			  				
 	}
 	getchar();
 }
@@ -188,19 +189,19 @@ int get_choice(const char * str)
 }
 
 
-unsigned short get_score(const char * str)
+short get_score(const char * str)
 {
-	unsigned short score = 0;
+	short score = 0;
 	int c;
-	while (score <= 0){
+	do {
 		printf("%s", str);
 		scanf("%hd", &score);
 		while((c = getchar()) != '\n' && c != EOF);
-	}
+	} while (score <= 0);
 	return score;
 }
 
-unsigned long get_id(const char * str)
+long get_id(const char * str)
 {
 	long id = 0;
 	int c;
@@ -212,14 +213,14 @@ unsigned long get_id(const char * str)
 	return id;
 }
 
-void add(unsigned long id, unsigned short score)
+void add(long id, short score)
 {
 	
 	id_arr[top] = id;
 	score_arr[top++] = score;
 }
 
-int find(unsigned long id)
+int find(long id)
 {
 	int i;
 	for (i = 0; i < top; i++){
