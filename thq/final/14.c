@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 #define N 100
 
@@ -42,6 +42,7 @@ void menu_main(void)
 
 		choice = -1;
 		while (choice < 0 || choice > 5){
+			
 			choice = get_choice("Please selct (0 ~ 5): ");
 		}
 		switch (choice){
@@ -62,24 +63,35 @@ void menu_add(void)
 {
 	long id;
 	short score;
-	
-	if (top >= N - 1){
-		printf("Error: too many student\n");
-		return;
+	char choice = 0;
+	int c = -1;
+	while (1){
+		if (top >= N - 1){
+			printf("Error: too many student\n");
+			return;
+		}
+		
+		id = get_id("Enter student's id: ");
+		
+		score = get_score("Enter student's score: ");
+		
+		if (find(id) < 0){
+			printf("OK\n");
+			add(id, score);
+		}
+		else {
+			printf("Error:the same student\n");
+		}
+		choice = 0;
+		while (choice != 'y' && choice != 'n'){
+			printf("continue? (y / n): ");
+			scanf("%c", &choice);
+			while((c = getchar()) != '\n' && c != EOF);
+		}
+		if (choice == 'n')
+			return;
+
 	}
-	
-	id = get_id("Enter student's id: ");
-	
-	score = get_score("Enter student's score: ");
-	
-	if (find(id) < 0){
-		printf("OK\n");
-		add(id, score);
-	}
-	else {
-		printf("Error:the same student\n");
-	}
-	getchar();
 }
 
 void  menu_find(void)
@@ -94,7 +106,7 @@ void  menu_find(void)
 	}
 	else
 		printf("Error: no such student\n");
-	getchar();
+	// getchar();
 }
 
 
@@ -168,7 +180,6 @@ void stat(void)
 void retrieve_all(void)
 {
 	int i;
-	
 	putchar('\n');
 	printf("Student    Score\n");
 	for (i = 0; i < top; i++){
