@@ -9,15 +9,9 @@ int main(void)
 		scanf("%d", arr + i);
 
 	/* insertion */
-	for (i = 9; i > 0; i--){
-		if (arr[i] < arr[i-1]){
-			t = arr[i-1]; arr[i-1] = arr[i];arr[i] = t;
-		}
-	}
-
-	for(i = 2; i < 10; i++){
+	for(i = 1; i < 10; i++){
 		t = arr[i];j = i - 1;
-		while (j >= 1 && arr[j] > t){
+		while (j >= 0 && arr[j] > t){
 			arr[j+1] = arr[j];
 			j--;
 		}

@@ -11,9 +11,9 @@ int main(void)
 	int i, j, m, n, t;
 	/* insertion */
 	for (m = 0; m < 5; m++)	{
-		for(i = 0; i < 5; i++){
+		for(i = 1; i < 6; i++){
 			t = arr[m][i];j = i - 1;
-			while (j >= 1 && arr[m][j] < t){
+			while (j >= 0 && arr[m][j] < t){
 				arr[m][j+1] = arr[m][j];
 				j--;
 			}
