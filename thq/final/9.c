@@ -34,8 +34,12 @@ int main(void)
 								flag = 0;
 
 							if (flag == 1){
-								printf("%d %d %d %d %d %d\n",
-								       a, b, c, d, e, f);
+								if(a) printf("A ");
+								if(b) printf("B ");
+								if(c) printf("C ");
+								if(d) printf("D ");
+								if(e) printf("E ");
+								if(f) printf("F ");
 							}
 						}
 					}
@@ -43,6 +47,7 @@ int main(void)
 			}
 		}
 	}
+	putchar('\n');
 	return 0;
 }
 								
