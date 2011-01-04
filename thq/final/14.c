@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #define N 100
 
@@ -103,6 +103,7 @@ void  menu_find(void)
 {
         long id;
 	int i;
+	char tmp[2];
 	printf("------------------------------------------------\n");
 	id = get_id("Enter student's id: ");
 	
@@ -113,7 +114,7 @@ void  menu_find(void)
 	}
 	else
 		printf("Error: no such student\n");
-	(void)getchar();
+	fgets(tmp, 2, stdin);
 }
 
 
@@ -142,13 +143,14 @@ void sort(void)
 void retrieve_all(void)
 {
 	int i;
+	char tmp[2];
 	printf("------------------------------------------------\n");
 	printf("  Student     English   Math    Comp.   Total\n");
 	for (i = 0; i < top; i++){
 		printf("\t%ld\t%4d\t%4d\t%4d\t%4d\n", id_arr[i],
 		       score_arr[i][0], score_arr[i][1], score_arr[i][2], score_arr[i][3]);
 	}
-	(void)getchar();
+	fgets(tmp, 2, stdin);
 }
 
 
