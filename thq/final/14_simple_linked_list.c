@@ -3,38 +3,39 @@
 #include <string.h>
 
 typedef struct student *link;
-struct student{
+typedef struct student{
         long id;
 	int engl;
 	int math;
 	int comp;
 	int total;
 	link next;
-};
+}
+student;
 
-void menu_main(void);
-void menu_add(void);
-void menu_find(void);
-void menu_list(void);
+static void menu_main(void);
+static void menu_add(void);
+static void menu_find(void);
+static void menu_list(void);
 
 
-link find_student(long id);
-void add_student(long, int, int, int);
-void lsort(void);
+static link find_student(long id);
+static void add_student(long, int, int, int);
+static void lsort(void);
 
-void get_input(char *, void *,int func(char*, void*), char *);
+static void get_input(char *, void *,int func(char*, void*), char *);
 /* helper func for get_input */
-int greater_than_0(char*, void*);
-int range0_4(char*, void*);
-int yesno(char*, void*);
-int ok(char*, void*);
+static int greater_than_0(char*, void*);
+static int range0_4(char*, void*);
+static int yesno(char*, void*);
+static int ok(char*, void*);
 
-link lstud;
+static link lstud;
 
 int main(void)
 {
 	while(!0){
-		system("clear");
+		(void)system("clear");
 		menu_main();
 	}
 	return 0;
@@ -43,22 +44,18 @@ int main(void)
 void menu_main(void)
 {
 	/* init -> init() */
-	lstud = malloc(sizeof(struct student));
-	lstud->next = NULL;
-
 	int choice = -1;
+	
 	while(!0){
 		(void)system("clear");
 		printf("-------------------Welcome----------------------\n");
 		printf("- 1.Add                                        -\n");
 		printf("- 2.Find                                       -\n");
 		printf("- 3.Stat                                       -\n");
-		printf("- 4.Sort (b                                    -\n");
+		printf("- 4.Sort (total score)                         -\n");
 		printf("- 0.Exit                                       -\n");
 		printf("------------------------------------------------\n");
-		/* */
 		
-		choice = -1;
 		get_input("%d", &choice, range0_4,
 			  "Please select (0 ~ 4): ");
 		
@@ -70,27 +67,25 @@ void menu_main(void)
 		case 0: exit(EXIT_SUCCESS);
 		}
 	}
-	
 }
 
+/* menus */
 void menu_add(void)
 {
 	long id;
 	int score[3];
-	char choice = -1;
-	// char *name = malloc(sizeof(char) * 25);
+	char choice = '\0';
+	
 	while (!0){
 		printf("------------------------------------------------\n");
 		
-		get_input("%ld", &id, greater_than_0,
+		get_input("%ld",(void*) &id, greater_than_0,
 			  "Enter student's id: ");
-		/*get_input("char*", name, NULL,
-		  "Enter student's name: "); */
-		get_input("%d", &score[0], greater_than_0,
+		get_input("%d", (void*)&score[0], greater_than_0,
 			  "Enter English score: ");
-		get_input("%d", &score[1], greater_than_0,
+		get_input("%d", (void*)&score[1], greater_than_0,
 			  "Enter Math score: ");
-		get_input("%d", &score[2], greater_than_0,
+		get_input("%d", (void*)&score[2], greater_than_0,
 			  "Enter Computer score: ");
 		
 		if (!find_student(id)){
@@ -112,11 +107,11 @@ void menu_add(void)
 void menu_find(void)
 {
 	long id;
-	int choice;
-	struct student *stud;
+	char choice;
+	link stud;
 	while(!0){
 		printf("------------------------------------------------\n");
-		get_input("%ld", &id, greater_than_0,
+		get_input("%ld", (void*)&id, greater_than_0,
 			  "Enter student's id: ");
 		if ((stud = find_student(id))){
 			printf("  Student     English   Math    Comp.   Total\n");
@@ -126,7 +121,7 @@ void menu_find(void)
 		else{
 			printf("!!!Error: can't find this student\n");
 		}
-		get_input("%c", &choice, yesno,
+		get_input("%c", (void*)&choice, yesno,
 			  "Find another student? (y / n)");
 		if (choice == 'n' || choice == 'N')
 			return;
@@ -137,23 +132,24 @@ void menu_list(void)
 {
 	link iter = lstud;
 	char tmp[2];
-       	if (iter->next == NULL){
+       	if (iter == NULL){
 		get_input("%c", tmp, ok, "No student");
 		return;
 	}
 	printf("------------------------------------------------\n");
 	printf("  Student     English   Math    Comp.   Total\n");
-	iter = iter->next;
-	while(iter != NULL){
+    	while(iter != NULL){
 		printf("\t%ld\t%4d\t%4d\t%4d\t%4d\n", iter->id, iter->engl,
 		       iter->math,  iter->comp, iter->total);
 		iter = iter->next;
 	}
 	get_input("%c", tmp, ok, "Press any key to continue ");
 }
+
+/* operate on lits & data*/
 void add_student(long id, int engl, int math, int comp)
 {
-	link nstud = malloc(sizeof(struct student));
+	link nstud = malloc(sizeof(student));
 	nstud->id = id;
 	nstud->engl = engl;
 	nstud->math = math;
@@ -173,30 +169,35 @@ void add_student(long id, int engl, int math, int comp)
 
 link find_student(long id)
 {
-	link head = lstud;
-	if (head == NULL)
+	link iter = lstud;
+	if (iter == NULL)
 		return NULL;
-	while(head != NULL && head->id!= id)
-		head = head->next;
-	return head;
+	while(iter != NULL && iter->id!= id)
+		iter = iter->next;
+	return iter;
 }
 
 void lsort(void)
 {
-	/* bubble */
-	link i ,j, jn, jnn;
-	for (i = lstud; i != NULL; i = i->next){
-		for (j = i; j!= NULL && (jn = j->next) != NULL
-			     && (jnn = j->next->next) != NULL; j = j->next){
-			if (jn->total < jnn->total){
-				j->next = jnn;
-				jn->next = jnn->next;
-				jnn->next = jn;
+	/* damm slow but easy bubble sort*/
+	link i ,jp, j, jn;
+	link tmp_head = malloc(sizeof(student));
+	tmp_head->next = lstud;
+	for (i = tmp_head; i != NULL; i = i->next){
+		for (jp = i; jp != NULL && (j = jp->next)!= NULL
+			     && (jn = j->next)!= NULL; jp = jp->next){
+			if (j->total < jn->total){
+				j->next = jn->next;
+				jn->next = j;
+				jp->next = jn;
 			}
 		}
 	}
+	lstud = tmp_head->next;
+	free(tmp_head);
 }
 
+/* universal input & check */
 void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
 {
 	char input[80];
@@ -213,6 +214,7 @@ void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
 	}while (!ok(pattern, containr));	
 }
 
+/* helper function for get_input*/
 int greater_than_0(char *pattern, void *data)
 {
 	if (strcmp(pattern, "%ld") == 0){

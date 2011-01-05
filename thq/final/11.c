@@ -30,7 +30,7 @@ int main(void)
 				}
 				/* judege && print */
 				if (max == min){
-					printf("%d %d\n", i + 1 ,j + 1);
+					printf("%d atR:%d C:%d\n", max, i + 1 ,j + 1);
 					sum++;
 				}
 			}
