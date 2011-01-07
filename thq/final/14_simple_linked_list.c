@@ -201,10 +201,6 @@ void lsort(void)
 void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
 {
 	char input[80];
-	if (strcmp(pattern, "none") == 0){
-		fgets(input, 79, stdin);
-		return;
-	}
 	do {
 	begin:
 		printf("%s", greet);
