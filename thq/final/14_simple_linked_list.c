@@ -12,7 +12,6 @@ struct student{
 	link next;
 };
 	
-static void menu_main(void);
 static void menu_add(void);
 static void menu_find(void);
 static void menu_list(void);
@@ -27,24 +26,12 @@ static void get_input(char *, void *,int func(char*, void*), char *);
 static int greater_than_0(char*, void*);
 static int range0_4(char*, void*);
 static int yesno(char*, void*);
-static int ok(char*, void*);
 
 static link lstud;
 
 int main(void)
 {
-	while(!0){
-		(void)system("clear");
-		menu_main();
-	}
-	return 0;
-}
-
-void menu_main(void)
-{
-	/* init -> init() */
 	int choice = -1;
-	
 	while(!0){
 		(void)system("clear");
 		printf("-------------------Welcome----------------------\n");
@@ -55,8 +42,7 @@ void menu_main(void)
 		printf("- 0.Exit                                       -\n");
 		printf("------------------------------------------------\n");
 		
-		get_input("%d", &choice, range0_4,
-			  "Please select (0 ~ 4): ");
+		get_input("%d", &choice, range0_4, "Please select (0 ~ 4): ");
 		
 		switch (choice){
 		case 1: menu_add(); break;
@@ -66,9 +52,10 @@ void menu_main(void)
 		case 0: exit(EXIT_SUCCESS);
 		}
 	}
+	return 0;
 }
 
-/* menus */
+/* submenus */
 void menu_add(void)
 {
 	long id;
@@ -90,11 +77,9 @@ void menu_add(void)
 		if (!find_student(id)){
 			printf("OK\n");
 		      	add_student(id, score[0],score[1], score[2]);
-		}
-		else {
+		} else {
 			printf("Error:the same student\n");
 		}
-		
 		
 		get_input("%c", &choice, yesno,
 			  "Add another student? (y / n)");
@@ -130,9 +115,9 @@ void menu_find(void)
 void menu_list(void)
 {
 	link iter = lstud;
-	char tmp[2];
+
        	if (iter == NULL){
-		get_input("%c", tmp, ok, "No student");
+		get_input(NULL, NULL, NULL, "No data now");
 		return;
 	}
 	printf("------------------------------------------------\n");
@@ -142,7 +127,7 @@ void menu_list(void)
 		       iter->math,  iter->comp, iter->total);
 		iter = iter->next;
 	}
-	get_input("%c", tmp, ok, "Press any key to continue ");
+	get_input(NULL, NULL, NULL, "Press Enter to continue ");
 }
 
 /* operate on lits & data*/
@@ -200,6 +185,11 @@ void lsort(void)
 void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
 {
 	char input[80];
+	if (!pattern || !containr || !ok){
+		printf("%s", greet);
+		fgets(input, 79, stdin);
+		return;
+	}
 	do {
 	begin:
 		printf("%s", greet);
@@ -242,18 +232,10 @@ int yesno(char *pattern, void *data)
 {
 	char c = *(char *)data;
 	if (strcmp(pattern, "%c") == 0){
-		if (c == 'y' || c =='Y'
-		    || c == 'n' || c == 'N')
+		if (c == 'y' || c =='Y'|| c == 'n' || c == 'N')
 			return 1;
 		else
 			return 0;
 	}
 	return 0;
 }
-
-int ok(char* pattern, void* data)
-{
-	return 1;
-}
-
-
