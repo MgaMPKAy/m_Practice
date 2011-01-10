@@ -3,16 +3,15 @@
 #include <string.h>
 
 typedef struct student *link;
-typedef struct student{
+struct student{
         long id;
 	int engl;
 	int math;
 	int comp;
 	int total;
 	link next;
-}
-student;
-
+};
+	
 static void menu_main(void);
 static void menu_add(void);
 static void menu_find(void);
@@ -149,7 +148,7 @@ void menu_list(void)
 /* operate on lits & data*/
 void add_student(long id, int engl, int math, int comp)
 {
-	link nstud = malloc(sizeof(student));
+	link nstud = malloc(sizeof(* nstud));
 	nstud->id = id;
 	nstud->engl = engl;
 	nstud->math = math;
@@ -181,7 +180,7 @@ void lsort(void)
 {
 	/* damm slow but easy bubble sort*/
 	link i ,jp, j, jn;
-	link tmp_head = malloc(sizeof(student));
+	link tmp_head = malloc(sizeof(*tmp_head));
 	tmp_head->next = lstud;
 	for (i = tmp_head; i != NULL; i = i->next){
 		for (jp = i; jp != NULL && (j = jp->next)!= NULL
