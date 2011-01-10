@@ -12,11 +12,7 @@ int main(void)
 	printf("Enter a num:");
 	scanf("%d", &n);
 
-	if ( n > arr[0] || n < arr[N-1]){
-		printf("Doesn't exist\n");
-		return 0;
-	}
-	for (i = 0, j = N; j - i >= 1; ){
+	for (i = 0, j = N; j - i > 1; ){
 		m = (i + j) / 2;
 		if (n == arr[m]){
 			flag = 1;
@@ -24,7 +20,7 @@ int main(void)
 		}
 		else if (n > arr[m])
 			j = m;
-		else 
+		else
 			i = m;
 	}
 
