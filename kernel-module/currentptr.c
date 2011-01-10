@@ -14,11 +14,15 @@ static int my_init(void)
 	
 	printk("Info of current process\n");	
 	printk("pid = %d(%s)\n", current->pid, current->comm);
-	printk("ppid = %d(%s)\n", current->parent->pid, current->parent->comm);
+	printk("ppid = %d(%s)\n", current->parent->pid,
+	       current->parent->comm);
 	printk("prio = %d, static_prio = %d, normal_prio = %d\n",
-	       current->prio, current->static_prio, current->normal_prio);
-	printk("exit_state = %d, exit_code = %d\n", current->exit_state, current->exit_code);
-	printk("group_leader = %d(%s)\n", current->group_leader->pid, current->group_leader->comm);
+	       current->prio, current->static_prio,
+	       current->normal_prio);
+	printk("exit_state = %d, exit_code = %d\n",
+	       current->exit_state, current->exit_code);
+	printk("group_leader = %d(%s)\n", current->group_leader->pid,
+	       current->group_leader->comm);
 	printk("state = %ld\n", current->state);
 	printk("flags = %hd\n", current->flags);
 	printk("ptrace = %hd\n", current->ptrace);
