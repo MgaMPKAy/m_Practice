@@ -4,12 +4,12 @@
 #include<string.h>
 #define ITEM int
 /* TODO:
-   ¶Ô±È¶ÔÍ¬Ò»Êý×éÅÅÐòÓÃµÄÊ±¼ä £ºÍ¨¹ý½á¹¹´«Öµor ¸´ÖÆÊý×é
-   ¿ÉÒÔÑ¡ÔñÅÅÐòµÄ·½·¨
-   »Øµ÷º¯Êý£ºÃüÁîÐÐ²ÎÊýµ÷ÓÃÅÅÐòËã·¨
-   ÊµÏÖ¿ìÅÅ£¨¶àÖÖ£©£¬ºÏ²¢£¬Ï£¶û£¬²åÈë£¬ºï×Ó£¬¶¶¶¯£¬¶ÑÅÅ£¬¼ÆÊý,»ùÊý
-   Ìá¸ßÊ±¼ä¾«¶È
-   MAYBE:¶àÎÄ¼þ
+   å¯¹æ¯”å¯¹åŒä¸€æ•°ç»„æŽ’åºç”¨çš„æ—¶é—´ ï¼šé€šè¿‡ç»“æž„ä¼ å€¼or å¤åˆ¶æ•°ç»„
+   å¯ä»¥é€‰æ‹©æŽ’åºçš„æ–¹æ³•
+   å›žè°ƒå‡½æ•°ï¼šå‘½ä»¤è¡Œå‚æ•°è°ƒç”¨æŽ’åºç®—æ³•
+   å®žçŽ°å¿«æŽ’ï¼ˆå¤šç§ï¼‰ï¼Œåˆå¹¶,çŒ´å­ï¼ŒæŠ–åŠ¨ï¼Œå †æŽ’ï¼Œè®¡æ•°,åŸºæ•°
+   æé«˜æ—¶é—´ç²¾åº¦
+   MAYBE:å¤šæ–‡ä»¶
 */
 
 void selection(ITEM *, int l ,int r);
