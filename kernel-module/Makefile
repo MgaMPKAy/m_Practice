@@ -3,6 +3,7 @@ obj-m += hellomod.o
 obj-m += currentptr.o
 obj-m += basicmem.o
 obj-m += mempool.o
+obj-m += call_dev.o
 
 KERNEL_PATH := /lib/modules/$(shell uname -r)/build/
 
