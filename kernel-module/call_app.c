@@ -17,7 +17,7 @@ int main(void)
 	
 	dev = open(DEVICE_FILENAME, O_RDWR |O_NDELAY);
 	if(dev >= 0){
-		printf( "2) seek function call\n");
+		printf("2) seek function call\n");
 		
 		ret = lseek(dev, 0x20, SEEK_SET);
 		printf("ret = %X\n", ret);
