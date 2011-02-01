@@ -164,12 +164,15 @@ link find_student(long id)
 void lsort(void)
 {
 	/* damm slow but easy bubble sort*/
-	link i ,jp, j, jn;
-	link tmp_head = malloc(sizeof(*tmp_head));
-	tmp_head->next = lstud;
-	for (i = tmp_head; i != NULL; i = i->next){
-		for (jp = i; jp != NULL && (j = jp->next)!= NULL
-			     && (jn = j->next)!= NULL; jp = jp->next){
+        link i , jp, j, jn;
+	struct student tmp_head;
+	tmp_head.total = -1;
+	tmp_head.next = lstud;
+	
+	for (i = &tmp_head; i != NULL; i = i->next){
+		for (jp = &tmp_head; (jp != NULL)
+			     && ((j = jp->next) != NULL)
+			     && (jn = j->next) != NULL; jp = jp->next){
 			if (j->total < jn->total){
 				j->next = jn->next;
 				jn->next = j;
@@ -177,8 +180,7 @@ void lsort(void)
 			}
 		}
 	}
-	lstud = tmp_head->next;
-	free(tmp_head);
+	lstud = tmp_head.next;
 }
 
 /* universal input & check */
