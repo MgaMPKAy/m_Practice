@@ -166,14 +166,15 @@ void lsort(void)
 	/* damm slow but easy bubble sort*/
         link i , jp, j, jn;
 	struct student tmp_head;
+	static int c = 0;
 	tmp_head.total = -1;
 	tmp_head.next = lstud;
 	
-	for (i = &tmp_head; i != NULL; i = i->next){
+	for (i = &tmp_head; i != NULL; i = i->next) {
 		for (jp = &tmp_head; (jp != NULL)
 			     && ((j = jp->next) != NULL)
-			     && (jn = j->next) != NULL; jp = jp->next){
-			if (j->total < jn->total){
+			     && (jn = j->next) != NULL; jp = jp->next) {
+			if (j->total < jn->total) {
 				j->next = jn->next;
 				jn->next = j;
 				jp->next = jn;
@@ -181,6 +182,8 @@ void lsort(void)
 		}
 	}
 	lstud = tmp_head.next;
+	if ((c = !c))
+		lsort();
 }
 
 /* universal input & check */
