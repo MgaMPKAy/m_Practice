@@ -1,9 +1,9 @@
 #include <stdio.h>
-
+#include <stdlib.h>
 int main(int argc, char *argv[])
 {
 	FILE *fd[2];
-	int c;
+	char buf[1024];
 	if (argc != 3){
 		printf("Usage: copy filename1 filename2\n");
 		exit(EXIT_FAILURE);
@@ -17,9 +17,9 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	
-	while ((c = fgetc(fd[0])) != EOF)
-		fputc(c, fd[1]);
-	
+	while (fgets(buf, sizeof(buf), fd[0]))
+		fputs(buf, fd[1]);
+			
 	fclose(fd[0]);
 	fclose(fd[1]);
 	return 0;

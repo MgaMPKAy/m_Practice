@@ -3,10 +3,13 @@
 目前有：
 kernel
 	学习Linux内核编程
+
+gtk		
+	ttt_v2.1.c	--> 简单的井字游戏，GTK+2.X		
 	  
 hello_world
-	hello.c  -> 纯粹的hello,world
-	hello_girls -> 广工女生节前夜弄的
+	hello.c  	--> 纯粹的hello,world
+	hello_girls 	--> 广工女生节前夜弄的,只是排版复杂
 
 thq
 	我做的《C语言程序设计（第三版）》的习题

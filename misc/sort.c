@@ -175,20 +175,20 @@ void merege(ITEM *arr, int start , int mid, int end)
 	int n1 = mid - start + 1;
 	int n2 = end - mid;
 	int i, j, k;
-	/* int left[n1], right[n2];  c99 */
+	/* int left[n1], right[n2];  c99-only? */
 	
 	int *left = malloc(sizeof(int) * n1);
 	int *right = malloc(sizeof(int) * n2);
 	if (left == NULL && right == NULL)
 		exit(EXIT_SUCCESS);
-		
+	
 	for (i = 0; i < n1; i++)
 		left[i] = arr[start+i];
 	for (j = 0; j < n2; j++)
 		right[j] = arr[mid + 1 + j];
 	i = j = 0;
 	k = start;
-
+	
 	while(i < n1 && j < n2)
 		if (left[i] < right[j])
 			arr[k++] = left[i++];
