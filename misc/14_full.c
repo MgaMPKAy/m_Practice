@@ -27,29 +27,26 @@ struct student{
 static int init(void);
 static void menu_add(void);
 static void menu_find(void);
-static void menu_list(struct list *head);
+static void menu_list(void);
 
 static link find_student(long id);
-static void add_student(long, int, int, int);
+static void add_student(long, char *, int, int, int);
 static void lsort_id(void);
 static void lsort_total(void);
-
-static void get_input(char *, void *,int func(char*, void*), char *);
-/* helper func for get_input */
-static int greater_than_0(char*, void*);
-static int range0_6(char*, void*);
-static int yesno(char*, void*);
-
+static void lsort_name(void);
 static void load(void);
 static void save(void);
-static int is_sort_id, is_sort_total;
-FILE *fd;
+static void get_input(char *, void *,int func(char*, void*), char *);
 
-void test(void)
-{
-	load();
-	get_input(NULL, NULL, NULL, "No data now");
-}
+/* helper func for get_input */
+static int greater_than_0(char*, void*);
+static int is_score(char*, void*);
+static int range0_6(char*, void*);
+static int range0_3(char*, void*);
+static int yesno(char*, void*);
+
+static int is_sort_id, is_sort_total, is_sort_name;;
+static FILE *fd;
 
 static struct list *head_id, *head_name, *head_total;
 
@@ -65,7 +62,7 @@ int main(void)
 		printf("- 1.Add                                        -\n");
 		printf("- 2.Find                                       -\n");
 		printf("- 3.Stat                                       -\n");
-		printf("- 4.Sort (total score)                         -\n");
+		//printf("- 4.Sort (total score)                         -\n");
 		printf("- 5. Load      6. Save                         -\n");
 		printf("- 0.Exit                                       -\n");
 		printf("------------------------------------------------\n");
@@ -74,20 +71,16 @@ int main(void)
 		switch (choice){
 		case 1: menu_add(); break;
 		case 2: menu_find(); break;
-		case 3:
-			if (!is_sort_id) {
-				lsort_id();
-				is_sort_id = 1;
-			}
-			menu_list(head_id);
+		case 3:	menu_list();
 			break;
-		case 4:
+			/*case 4:
 			if (!is_sort_total) {
 				lsort_total();
 				is_sort_total = 1;
 			}
 			menu_list(head_total);
 			break;
+			*/
 		case 5: load();break;
 		case 6: save();break;
 		case 0: exit(EXIT_SUCCESS);
@@ -95,7 +88,7 @@ int main(void)
 	}
 	return 0;
 }
-	
+
 static int init(void)
 {
 	head_id = malloc(sizeof(*head_id));
@@ -109,19 +102,21 @@ static int init(void)
 	return 0;
 }
 
-
 /* submenus */
 void menu_add(void)
 {
 	long id;
 	int score[3];
+	char name[80];
 	char choice = '\0';
-
+	
 	while (!0){
 		printf("------------------------------------------------\n");
 		
-		get_input("%ld",(void*) &id, greater_than_0,
+		get_input("%ld",(void*)&id, greater_than_0,
 			  "Enter student's id: ");
+		get_input("%s", (void*)name, NULL,
+			  "Enter student's name: ");
 		get_input("%d", (void*)&score[0], greater_than_0,
 			  "Enter English score: ");
 		get_input("%d", (void*)&score[1], greater_than_0,
@@ -131,8 +126,8 @@ void menu_add(void)
 		
 		if (!find_student(id)){
 			printf("OK\n");
-		      	add_student(id, score[0],score[1], score[2]);
-			is_sort_id = is_sort_total = 0;
+		      	add_student(id, name ,score[0],score[1], score[2]);
+			is_sort_id = is_sort_total = is_sort_name = 0;
 		} else {
 			printf("Error:the same student\n");
 		}
@@ -154,8 +149,8 @@ void menu_find(void)
 			  "Enter student's id: ");
 		if ((stud = find_student(id))){
 			printf("  Student     English   Math    Comp.   Total\n");
-			printf("\t%ld\t%4d\t%4d\t%4d\t%4d\n", stud->id, stud->engl,
-			       stud->math,  stud->comp, stud->total);
+			printf("\t%ld\t%4d\t%4d\t%4d\t%4d %s\n", stud->id, stud->engl,
+			       stud->math,  stud->comp, stud->total, stud->name);
 		}
 		else {
 			printf("!!!Error: can't find this student\n");
@@ -167,34 +162,81 @@ void menu_find(void)
 	}
 }
 
-void menu_list(struct list *head)
+void menu_list(void)
 {
 	struct student *stud;
-	struct list *list;
-	if (head_id->next == NULL){
-		get_input(NULL, NULL, NULL, "No data now");
-		return;
-	}
+	struct list *iter, *head;
+	int choice;
+
 	printf("------------------------------------------------\n");
-	printf("  Student     English   Math    Comp.   Total\n");
-	
-	list_for_each(list, head){
-		if (head == head_id) {
-			stud = list_entry(list, struct student, list_id);
-		} else if (head == head_total) {
-			stud = list_entry(list, struct student, list_total);
+	printf("-1.Sort by ID                                  -\n");
+	printf("-2.Sort by Name                                -\n");
+	printf("-3.Sort by Total score                         -\n");
+	printf("-0.Return                                      -\n");
+	printf("------------------------------------------------\n");
+
+	get_input("%d", (void *)&choice, range0_3,
+		  "Please select (0 ~ 3): ");
+	switch (choice) {
+		if (head_id->next == NULL){
+			get_input(NULL, NULL, NULL, "No data now");
+			return;
 		}
-		printf("\t%ld\t%4d\t%4d\t%4d\t%4d\n", stud->id, stud->engl,
-		       stud->math,  stud->comp, stud->total);
+	case 1:
+		head = head_id;
+		if (!is_sort_id) {
+			lsort_id();
+			is_sort_id = 1;
+		}
+		printf("------------------------------------------------\n");
+		printf("  Student     English   Math    Comp.   Total\n");
+		list_for_each(iter, head_id) {
+			stud = list_entry(iter, struct student, list_id);
+			printf("\t%ld\t%4d\t%4d\t%4d\t%4d %s\n", stud->id, stud->engl,
+			       stud->math,  stud->comp, stud->total, stud->name);
+		}
+		break;
+	case 2:
+		head = head_name;
+		if (!is_sort_name) {
+			lsort_name();
+			is_sort_name = 1;
+		}
+		printf("------------------------------------------------\n");
+		printf("  Student     English   Math    Comp.   Total\n");
+		list_for_each(iter, head_name){
+			stud = list_entry(iter, struct student, list_name);
+			printf("\t%ld\t%4d\t%4d\t%4d\t%4d %s\n", stud->id, stud->engl,
+			       stud->math,  stud->comp, stud->total, stud->name);
+		}
+		break;
+	case 3:
+		head = head_total;
+		if (!is_sort_total) {
+			lsort_total();
+			is_sort_total = 1;
+		}
+		printf("------------------------------------------------\n");
+		printf("  Student     English   Math    Comp.   Total\n");
+		list_for_each(iter, head_total){
+			stud = list_entry(iter, struct student, list_total);
+			printf("\t%ld\t%4d\t%4d\t%4d\t%4d %s\n", stud->id, stud->engl,
+			       stud->math,  stud->comp, stud->total, stud->name);
+		}
+		break;
+	case 0:
+		return;
 	}
 	get_input(NULL, NULL, NULL, "Press Enter to continue ");
 }
 
 /* operate on lits & data*/
-void add_student(long id, int engl, int math, int comp)
+void add_student(long id, char * name, int engl, int math, int comp)
 {
 	link nstud = malloc(sizeof(* nstud));
 	nstud->id = id;
+	strncpy(nstud->name, name, 20);
+	nstud->name[19] = '\0';
 	nstud->engl = engl;
 	nstud->math = math;
 	nstud->comp = comp;
@@ -203,12 +245,16 @@ void add_student(long id, int engl, int math, int comp)
 	if (head_id->next == NULL){
 		head_id->next = &(nstud->list_id);
 		nstud->list_id.next = NULL;
+		head_name->next = &(nstud->list_name);
+		nstud->list_name.next = NULL;
 		head_total->next = &(nstud->list_total);
 		nstud->list_total.next = NULL;
 	}
 	else {
 		nstud->list_id.next = head_id->next;
 		head_id->next = &(nstud->list_id);
+		nstud->list_name.next = head_name->next;
+		head_name->next = &(nstud->list_name);
 		nstud->list_total.next = head_total->next;
 		head_total->next = &(nstud->list_total);
 	}
@@ -267,11 +313,33 @@ void lsort_id(void)
 		lsort_id();
 }
 
+void lsort_name(void)
+{
+	/* ugly bubble sort */
+	struct list *i, *jp, *j, *jn;
+	static int c = 0;
+	for (i = head_name; i!= NULL; i = i->next) {
+		for (jp = head_name; jp != NULL
+			     && (j = jp->next) != NULL
+			     && (jn = j->next) != NULL; jp = jp->next) {
+			if (strcmp((list_entry(j, struct student, list_name)->name)
+				   ,(list_entry(jn, struct student, list_name)->name)) < 0) {
+				j->next = jn->next;
+				jn->next = j;
+				jp->next = jn;
+			}
+		}
+	}
+	if ((c = !c))
+		lsort_name();
+}
+
 static void load(void)
 {
 	int score[3];
 	long id;
 	char input[80];
+	char name[20];
 	fd = fopen("./data", "r");
 	if (fd == NULL) {
 		exit(EXIT_FAILURE);
@@ -279,8 +347,9 @@ static void load(void)
 	if (fd == NULL)
 		exit(1);
 	while (fgets(input, 80, fd) != 0) {
-		sscanf(input, "%ld %d %d %d",&id, score , score + 1, score + 2);
-		add_student(id, score[0],score[1], score[2]);
+		sscanf(input, "%ld %d %d %d %s",
+		       &id, score , score + 1, score + 2, name);
+		add_student(id, name, score[0], score[1], score[2]);
 	}
 	fclose(fd);
 }
@@ -296,18 +365,25 @@ static void save(void)
 	}
 	list_for_each(iter, head_id) {
 		stud = list_entry(iter, struct student, list_id);
-		sprintf(output, "%ld %d %d %d\n",
-			 stud->id, stud->engl, stud->math, stud->comp);
+		sprintf(output, "%ld %d %d %d %s\n",
+			stud->id, stud->engl, stud->math, stud->comp, stud->name);
 		fputs(output, fd);
 	}
 	fclose(fd);
 }
 
 /* universal input & check */
-void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
+void get_input
+(char *pattern, void *container, int ok(char*, void*), char *greet)
 {
 	char input[80];
-	if (!pattern || !containr || !ok) {
+	if (!ok && container) {
+		printf("%s", greet);
+		fgets(input, 79, stdin);
+		sscanf(input, pattern, container);
+		return;
+	}
+	if (!pattern && !container && !ok) {
 		printf("%s", greet);
 		fgets(input, 79, stdin);
 		return;
@@ -316,9 +392,9 @@ void get_input(char *pattern, void *containr, int ok(char*, void*), char *greet)
 	begin:
 		printf("%s", greet);
 		fgets(input, 79, stdin);
-		if (sscanf(input, pattern, containr) != 1)
+		if (sscanf(input, pattern, container) != 1)
 			goto begin;
-	}while (!ok(pattern, containr));	
+	} while (!ok(pattern, container));	
 }
 
 /* helper function for get_input*/
@@ -339,10 +415,31 @@ int greater_than_0(char *pattern, void *data)
 	return 0;
 }
 
+int is_score(char *pattern, void *data)
+{
+	
+	if (*(int *)data >= 0 && *(int *)data <= 100) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 int range0_6(char *pattern, void *data)
 {
 	if (strcmp(pattern, "%d") == 0) {
 		if (*(int *)data >= 0 && *(int *)data <= 6)
+			return 1;
+		else
+			return 0;
+	}
+	return 0;
+}
+
+int range0_3(char *pattern, void *data)
+{
+	if (strcmp(pattern, "%d") == 0) {
+		if (*(int *)data >= 0 && *(int *)data <= 3)
 			return 1;
 		else
 			return 0;
