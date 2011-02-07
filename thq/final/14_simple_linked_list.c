@@ -30,7 +30,7 @@ static void menu_find(void);
 static void menu_list(void);
 
 static link find_student(long id);
-static void add_student(long, char *, int, int, int);
+static int  add_student(long, char *, int, int, int);
 static void lsort_id(void);
 static void lsort_total(void);
 static void lsort_name(void);

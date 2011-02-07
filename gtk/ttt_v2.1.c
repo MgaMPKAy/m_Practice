@@ -16,6 +16,7 @@ void popup(gint);
 
 GtkWidget *window, *vbox, *hbox[3], *hbox_menu;
 GtkWidget *button[10], *reset_button;
+GtkWidget *image[9];
 gint ischanged[9];
 gulong sid_ai[10];
 GtkWidget *ai_on;
@@ -27,7 +28,6 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new( GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_window_set_title(GTK_WINDOW(window), "Txx-Txx-Txx...2.1");
 	g_signal_connect(GTK_OBJECT(window), "destroy",
@@ -38,12 +38,15 @@ int main(int argc, char *argv[])
 
 	hbox_menu = gtk_hbox_new(FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox_menu, TRUE, TRUE, 3);
-	
+
+	/* 建立和设置按钮的图像、信号处理函数*/
 	for(int i = 0; i < 3; i++) {
 		hbox[i] = gtk_hbox_new(FALSE,0);
 		gtk_box_pack_start(GTK_BOX(vbox),hbox[i],TRUE, TRUE, 3);
 		for(int j = 0; j < 3; j++) {
-			button[i * 3 + j] = gtk_button_new_with_label(" ");
+			button[i * 3 + j] = gtk_button_new();
+			image[i * 3 + j] = gtk_image_new_from_file("./ttt_none.png");
+			gtk_button_set_image(GTK_BUTTON(button[i * 3 + j]), image[i * 3 + j]);
 			gtk_box_pack_start(GTK_BOX(hbox[i]),button[i * 3 + j],
 					   TRUE, TRUE, 3);
 			/* 按钮接受到clicked信号，就执行drawox(),画园或叉 */
@@ -123,8 +126,8 @@ void reset(GtkWidget *widget, gpointer *data)
 {
 	for(int i = 0; i < 9; i++) {
 		ischanged[i] = 0;
-		gtk_button_set_label(GTK_BUTTON(button[i]), "  ");
-	} 
+		gtk_image_set_from_file(GTK_IMAGE(image[i]), "./ttt_none.png");
+	}
 	count = 0;
 	gtk_button_set_label(GTK_BUTTON(button[9]), "RESET");
 	win = 0;
@@ -145,16 +148,18 @@ void drawox(GtkWidget *widget, gpointer *i)
 	else ischanged[GPOINTER_TO_INT(i)] = player;
   
 	if (player == 1) {
-		gtk_button_set_label(GTK_BUTTON(widget), "X");     
+		gtk_image_set_from_file(GTK_IMAGE(image[GPOINTER_TO_INT(i)]),
+					"./ttt_X.png");
 		gtk_widget_set_sensitive(widget, FALSE);
 		count++;
 		player = 2;
 	}
 	else {
-		gtk_button_set_label(GTK_BUTTON(widget), "O");
+		gtk_image_set_from_file(GTK_IMAGE(image[GPOINTER_TO_INT(i)]),
+					"./ttt_O.png");
 		gtk_widget_set_sensitive(widget, FALSE);
 		count++;
-		player = 1; 
+		player = 1;
 	}
 	judge();
 }
