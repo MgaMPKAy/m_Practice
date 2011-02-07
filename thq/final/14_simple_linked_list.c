@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <setjmp.h>
 
 #define list_entry(ptr, type, member)					\
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
@@ -47,7 +48,7 @@ static int yesno(char*, void*);
 
 static int is_sort_id, is_sort_total, is_sort_name;;
 static FILE *fd;
-
+static jmp_buf back;
 static struct list *head_id, *head_name, *head_total;
 
 int main(void)
@@ -55,7 +56,7 @@ int main(void)
 	int choice = -1;
 	
 	(void)init();
-	
+
 	while(!0){
 		(void)system("clear");
 		printf("-------------------Welcome----------------------\n");
@@ -117,7 +118,7 @@ void menu_add(void)
 			  "Enter student's id: ");
 		get_input("%s", (void*)name, NULL,
 			  "Enter student's name: ");
-		get_input("%d", (void*)&score[0], greater_than_0,
+		get_input("%d", (void*)&score[0], is_score,
 			  "Enter English score: ");
 		get_input("%d", (void*)&score[1], greater_than_0,
 			  "Enter Math score: ");
@@ -231,9 +232,13 @@ void menu_list(void)
 }
 
 /* operate on lits & data*/
-void add_student(long id, char * name, int engl, int math, int comp)
+int add_student(long id, char * name, int engl, int math, int comp)
 {
 	link nstud = malloc(sizeof(* nstud));
+	if (nstud == NULL) {
+		printf("ERROR: malloc()\n");
+		return 0;
+	}
 	nstud->id = id;
 	strncpy(nstud->name, name, 20);
 	nstud->name[19] = '\0';
@@ -258,6 +263,7 @@ void add_student(long id, char * name, int engl, int math, int comp)
 		nstud->list_total.next = head_total->next;
 		head_total->next = &(nstud->list_total);
 	}
+	return 1;
 }
 
 link find_student(long id)
@@ -336,7 +342,7 @@ void lsort_name(void)
 
 static void load(void)
 {
-	int score[3];
+	int score[3], ret, line = 0;;
 	long id;
 	char input[80];
 	char name[20];
@@ -347,9 +353,15 @@ static void load(void)
 	if (fd == NULL)
 		exit(1);
 	while (fgets(input, 80, fd) != 0) {
-		sscanf(input, "%ld %d %d %d %s",
-		       &id, score , score + 1, score + 2, name);
-		add_student(id, name, score[0], score[1], score[2]);
+		line++;
+		if ((sscanf(input, "%ld %d %d %d %s",
+			    &id, score , score + 1, score + 2, name)) != 5) {
+			printf("Error in datafile in line %d\n", line);
+			continue;
+		}
+		if (!add_student(id, name, score[0], score[1], score[2])) {
+			printf("Load error\n");
+		}
 	}
 	fclose(fd);
 }
@@ -421,6 +433,7 @@ int is_score(char *pattern, void *data)
 	if (*(int *)data >= 0 && *(int *)data <= 100) {
 		return 1;
 	} else {
+		printf("!!!Range: 0 ~ 100\n");
 		return 0;
 	}
 }

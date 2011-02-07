@@ -28,6 +28,7 @@ void free_arr(ITEM **arr);
 
 int main(int argc, char *argv[])
 {
+	ITEM *arr1, *arr2;
 	int n,max,output = 1;
 	time_t start, end;
 	int i;
@@ -51,24 +52,23 @@ int main(int argc, char *argv[])
 	}
 	
 	srand((unsigned)time(NULL));  
-	ITEM *arr = make_random_arr(n, max);
-
-	ITEM * arr2 = malloc(sizeof(ITEM) * n);
+	arr1 = make_random_arr(n, max);
+	arr2 = malloc(sizeof(ITEM) * n);
 	for (i = 0; i < n; i++)
 		arr2[i] = arr[i];
 	
-	if(output == 1) output_arr(arr, n);// should be improved
+	if(output == 1) output_arr(arr1, n);// should be improved
 	start = clock(); 
 	meregesort(arr, 0, n-1);
 	end = clock();
-	if(output == 1) output_arr(arr, n);// should be improved
+	if(output == 1) output_arr(arr1, n);// should be improved
 	printf("Time used: %.2lfms\n",(double)(end-start));
 	
-	if(output == 1) output_arr(arr, n);// should be improved
+	if(output == 1) output_arr(arr2, n);// should be improved
 	start = clock(); 
 	quicksort(arr2, 0, n-1);
 	end = clock();
-	if(output == 1) output_arr(arr, n);// should be improved
+	if(output == 1) output_arr(arr2, n);// should be improved
 	printf("Time used: %.2lfms\n",(double)(end-start));
 	
 	free_arr(&arr);
@@ -177,8 +177,8 @@ void merege(ITEM *arr, int start , int mid, int end)
 	int i, j, k;
 	/* int left[n1], right[n2];  c99-only? */
 	
-	int *left = malloc(sizeof(int) * n1);
-	int *right = malloc(sizeof(int) * n2);
+	ITEM *left = malloc(sizeof(ITEM) * n1);
+	ITEM *right = malloc(sizeof(ITEM) * n2);
 	if (left == NULL && right == NULL)
 		exit(EXIT_SUCCESS);
 	
