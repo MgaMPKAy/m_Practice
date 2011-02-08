@@ -232,7 +232,7 @@ void ai_easy(GtkWidget *widget, gpointer *data)
 	
 	/* 先画正中，再画4个角，最后是十字 */
 	/* 交换顺序，避免重复 */
-	for (int i = 0; i < 10; i++) { 
+	for (int i = 0; i < 4; i++) {
 		a = rand() % 4;
 		b = rand() % 4;
 		t = best_move[1+a];
@@ -244,12 +244,11 @@ void ai_easy(GtkWidget *widget, gpointer *data)
 	}
 	for (int i = 0; i < 9; i++) {
 		move = best_move[i];
-		
 		if (ischanged[move] == 0) {
 			drawox(button[move],GINT_TO_POINTER(move));
 			return;
 		}
-	}  
+	}
 }
 /* popup()
  * 弹出窗口显示结果
@@ -257,27 +256,20 @@ void ai_easy(GtkWidget *widget, gpointer *data)
  */
 void popup(gint i)
 {
-	GtkWidget *dialog, *label, *content_area;
+	GtkWidget *dialog;
+	
 	gchar *message[] = {"Draw",
-			    "Player 1 win !!!",
-			    "Player 2 win !!!",
+			    "Player X win !!!",
+			    "Player O win !!!",
 			    "AI is on"};
-
-	dialog = gtk_dialog_new_with_buttons("Result!!!",
-					     GTK_WINDOW(window),
-					     GTK_DIALOG_DESTROY_WITH_PARENT,
-					     "Again!",
-					     GTK_RESPONSE_NONE,
-					     NULL);
-	gtk_window_set_default_size(GTK_WINDOW(dialog), 120, 70);
-	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-	label = gtk_label_new(message[i]);
-
+	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(window),
+						    GTK_DIALOG_DESTROY_WITH_PARENT,
+						    GTK_MESSAGE_INFO,
+						    GTK_BUTTONS_OK,
+						    message[i]);
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(reset),
 				 dialog);
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy),
 				 dialog);
-	gtk_container_add(GTK_CONTAINER(content_area), label);
 	gtk_widget_show_all(dialog);
 }
