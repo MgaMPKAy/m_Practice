@@ -11,22 +11,29 @@ int main(void)
 
 	printf("Enter a num:");
 	scanf("%d", &n);
-
-	for (i = 0, j = N; j - i > 1; ){
+	
+	//for (i = -1, j = N - 1; j - i > 1; ){}
+	i = 0; j = N - 1;
+	while (i <= j) {
 		m = (i + j) / 2;
 		if (n == arr[m]){
 			flag = 1;
 			break;
 		}
 		else if (n > arr[m])
-			j = m;
+			j = m - 1;
 		else
-			i = m;
+			i = m + 1;
 	}
 
 	if (flag)
 		printf("%d exits, %d\n", n, m + 1) ;
 	else
 		printf("%d doesn't exixt\n", n);
+	
+	for(i = 0; i < N; i++) {
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
 	return 0;
 }
