@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	g_signal_connect(reset_button,"clicked", G_CALLBACK(reset), button);
 	gtk_box_pack_start(GTK_BOX(hbox_menu), reset_button, TRUE, TRUE, 3);
 	
-	ai_on = gtk_check_button_new_with_label(" AI?");
+	ai_on = gtk_check_button_new_with_label("Vs computer");
 	g_signal_connect(ai_on,"clicked", G_CALLBACK(ai_toggle), button);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ai_on),TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox_menu), ai_on, FALSE, FALSE, 3);
@@ -100,20 +100,14 @@ void judge(void)
 	if (win == 1)
 		return;
 	if (iswin()) {
-		gtk_widget_set_sensitive(button[9], FALSE);
-		gtk_widget_set_sensitive(ai_on, FALSE);
 		if (player == 1) {
 			popup(2);
 		} else {
 			popup(1);
 		}
-		for (int i = 0; i < 9; i++)
-			gtk_widget_set_sensitive(button[i], FALSE);
 		win = 1;
 	}
 	if ((count == 9)&&(win == 0)) {
-		gtk_widget_set_sensitive(button[9], FALSE);
-		gtk_widget_set_sensitive(ai_on, FALSE);
 		popup(0);
 	}
 }
@@ -194,8 +188,7 @@ void ai_easy(GtkWidget *widget, gpointer *data)
 	gint tmpp = player;
 	gint best_move[] = {4, 0, 2, 6, 8, 1, 3, 5, 7};
 	gint move;
-	gint a, b, t;
-
+	
 	/* 如果已经没方格或着对方已经获胜 */
 	if(count == 9 || iswin())
 		return;
@@ -228,11 +221,11 @@ void ai_easy(GtkWidget *widget, gpointer *data)
 			return;
 		} else
 			ischanged[i] = 0;
-		}
+	}
 	
 	/* 先画正中，再画4个角，最后是十字 */
 	/* 交换顺序，避免重复 */
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0, a =0, b = 0, t = 0; i < 4; i++) {
 		a = rand() % 4;
 		b = rand() % 4;
 		t = best_move[1+a];
@@ -256,19 +249,29 @@ void ai_easy(GtkWidget *widget, gpointer *data)
  */
 void popup(gint i)
 {
-	GtkWidget *dialog;
-	
+	GtkWidget *dialog, *image;
 	gchar *message[] = {"Draw",
 			    "Player X win !!!",
 			    "Player O win !!!",
 			    "AI is on"};
-	dialog = gtk_message_dialog_new_with_markup(GTK_WINDOW(window),
-						    GTK_DIALOG_DESTROY_WITH_PARENT,
-						    GTK_MESSAGE_INFO,
-						    GTK_BUTTONS_OK,
-						    message[i]);
-	g_signal_connect_swapped(dialog, "response", G_CALLBACK(reset),
-				 dialog);
+	gchar *img_dir[] = {"./ttt_none.png",
+			    "./ttt_X.png",
+			    "./ttt_O.png",};
+
+	dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_INFO,
+					GTK_BUTTONS_OK,
+					"\n%s", message[i]);
+	if (i != 0) {
+		image = gtk_message_dialog_get_image(GTK_MESSAGE_DIALOG(dialog));
+		gtk_image_set_from_file(GTK_IMAGE(image), img_dir[i]);
+	}
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+	gtk_window_set_decorated(GTK_WINDOW(dialog), FALSE);
+	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
+	
+	g_signal_connect(dialog, "response", G_CALLBACK(reset),NULL);
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy),
 				 dialog);
 	gtk_widget_show_all(dialog);
