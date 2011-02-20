@@ -12,7 +12,6 @@
 struct list {
 	struct list *next;
 };
-typedef struct student *link;
 struct student{
         long id;
 	char name[20];
@@ -20,7 +19,6 @@ struct student{
 	int math;
 	int comp;
 	int total;
-	link next;
 	struct list list_id;
 	struct list list_name;
 	struct list list_total;
@@ -30,7 +28,7 @@ static void menu_add(void);
 static void menu_find(void);
 static void menu_list(void);
 
-static link find_student(long id);
+static struct student * find_student(long id);
 static int  add_student(long, char *, int, int, int);
 static void lsort_id(void);
 static void lsort_total(void);
@@ -48,7 +46,6 @@ static int yesno(char*, void*);
 
 static int is_sort_id, is_sort_total, is_sort_name;;
 static FILE *fd;
-static jmp_buf back;
 static struct list *head_id, *head_name, *head_total;
 
 int main(void)
@@ -143,7 +140,7 @@ void menu_find(void)
 {
 	long id;
 	char choice;
-	link stud;
+	struct student * stud;
 	while(!0){
 		printf("------------------------------------------------\n");
 		get_input("%ld", (void*)&id, greater_than_0,
@@ -234,7 +231,7 @@ void menu_list(void)
 /* operate on lits & data*/
 int add_student(long id, char * name, int engl, int math, int comp)
 {
-	link nstud = malloc(sizeof(* nstud));
+	struct student * nstud = malloc(sizeof(* nstud));
 	if (nstud == NULL) {
 		printf("ERROR: malloc()\n");
 		return 0;
@@ -266,7 +263,7 @@ int add_student(long id, char * name, int engl, int math, int comp)
 	return 1;
 }
 
-link find_student(long id)
+struct student * find_student(long id)
 {
 	struct list *iter;
 	struct student *stud;
@@ -342,7 +339,7 @@ void lsort_name(void)
 
 static void load(void)
 {
-	int score[3], ret, line = 0;;
+	int score[3], line = 0;;
 	long id;
 	char input[80];
 	char name[20];
