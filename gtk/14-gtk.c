@@ -4,16 +4,6 @@
 #include <setjmp.h>
 #include <gtk/gtk.h>
 
-#define list_entry(ptr, type, member)					\
-	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
-
-#define list_for_each(pos, head)				\
-	for (pos = (head)->next; pos != NULL; pos = pos->next)
-
-struct list {
-	struct list *next;
-};
-//typedef struct student *link;
 struct student{
         long id;
 	char name[20];
@@ -21,7 +11,6 @@ struct student{
 	int math;
 	int comp;
 	int total;
-	struct list list_id;
 };
 enum {
 	COLUMN_ID,
@@ -32,37 +21,19 @@ enum {
 	COLUMN_TOTAL,
 	NUM_COLUMNS
 };
-static int init(int *, char ***);
-static struct student * find_student(long id);
+static GtkTreeIter *find_student(long id);
 static void add_student_dialog(GtkWidget *, gpointer);
 static int add_student(long id, char *, int, int, int);
 static void load(void);
 static void save(void);
 
-static FILE *fd;
-static struct list *head_id, *head_name, *head_total;
-
 /* gtk */
 static GtkTreeModel *create_model(void);
 static GtkWidget *window;
 static GtkTreeModel *model;
-GtkListStore *store;
-GtkTreeIter iter;
-int list_view(void);
-
-static int init(int *argc, char **argv[])
-{
-	gtk_init(argc, argv);
-	head_id = malloc(sizeof(*head_id));
-	head_name = malloc(sizeof(*head_name));
-	head_total = malloc(sizeof(head_total));
-	if (!head_id || !head_name || !head_total)
-		exit(EXIT_FAILURE);
-	memset(head_id, 0, sizeof(*head_id));
-	memset(head_name, 0, sizeof(*head_name));
-	memset(head_total, 0, sizeof(*head_total));
-	return 0;
-}
+static GtkListStore *store;
+static GtkTreeIter iter;
+static int list_view(void);
 
 int add_student(long id, char * name, int math, int comp, int engl)
 {
@@ -84,15 +55,7 @@ int add_student(long id, char * name, int math, int comp, int engl)
 	stud->math = math;
 	stud->comp = comp;
 	stud->total = engl + math + comp;
-	
-	if (head_id->next == NULL){
-		head_id->next = &(stud->list_id);
-		stud->list_id.next = NULL;
-	}
-	else {
-		stud->list_id.next = head_id->next;
-		head_id->next = &(stud->list_id);
-	}
+
 	gtk_list_store_prepend(store, &iter);
 	gtk_list_store_set(store, &iter,
 			   COLUMN_ID, stud->id,
@@ -203,14 +166,21 @@ void add_student_dialog(GtkWidget *widget, gpointer data)
 
 
 
-struct student *find_student(long id)
+GtkTreeIter *find_student(long id_find)
 {
-	struct list *iter;
-	struct student *stud;
-	list_for_each(iter, head_id){
-		stud = list_entry(iter, struct student, list_id);
-		if (stud->id == id)
-			return stud;
+	gboolean vaild;
+	long id;
+	static GtkTreeIter iter;
+
+	vaild = gtk_tree_model_get_iter_first(model, &iter);
+	while (vaild) {
+		gtk_tree_model_get(model, &iter,
+				   COLUMN_ID, &id,
+				   -1);
+		if (id_find == id) {
+			return &iter;
+		}
+		vaild = gtk_tree_model_iter_next(model, &iter);
 	}
 	return NULL;
 }
@@ -221,7 +191,7 @@ static void load(void)
 	long id;
 	char input[80];
 	char name[20];
-	fd = fopen("./data", "r");
+	FILE *fd = fopen("./data", "r");
 	if (fd == NULL) {
 		exit(EXIT_FAILURE);
 	}
@@ -235,7 +205,7 @@ static void load(void)
 			continue;
 		}
 		if (!add_student(id, name, score[0], score[1], score[2])) {
-			printf("Load error\n");
+			printf("add error\n");
 		}
 	}
 	fclose(fd);
@@ -244,18 +214,29 @@ static void load(void)
 
 static void save(void)
 {
-	struct list *iter;
-	struct student *stud;
-	char output[80];
+	gboolean vaild;
+	GtkTreeIter iter;
+	long id;
+	gchar output[80], *name;
+	int score[3];
+	FILE *fd;
+		
 	fd = fopen("./data", "w");
-	if (fd == NULL) {
-		exit(EXIT_FAILURE);
-	}
-	list_for_each(iter, head_id) {
-		stud = list_entry(iter, struct student, list_id);
+	vaild = gtk_tree_model_get_iter_first(model, &iter);
+	while (vaild) {
+		gtk_tree_model_get(model, &iter,
+				   COLUMN_ID, &id,
+				   COLUMN_NAME, &name,
+				   COLUMN_MATH, score,
+				   COLUMN_COMP, score + 1,
+				   COLUMN_ENGL, score + 2,
+				   -1);
+		name[19] = '\0';
 		sprintf(output, "%ld %d %d %d %s\n",
-			stud->id, stud->engl, stud->math, stud->comp, stud->name);
+			id, score[0], score[1], score[2], name);
 		fputs(output, fd);
+		g_free(name);
+		vaild = gtk_tree_model_iter_next(model, &iter);
 	}
 	fclose(fd);
 }
@@ -263,7 +244,7 @@ static void save(void)
 static GtkTreeModel *
 create_model(void)
 {
-		
+	
 	store = gtk_list_store_new(NUM_COLUMNS,
 				   G_TYPE_LONG,
 				   G_TYPE_STRING,
@@ -279,7 +260,7 @@ add_columns (GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
-	//GtkTreeModel *model = gtk_tree_view_get_model (treeview);
+	
 	char *column_str[] = {
 		"ID", "Name", "Math", "Computer", "English", "Total"};
 	for (int i = 0; i < NUM_COLUMNS; i++) {
@@ -316,7 +297,7 @@ int main(int argc, char *argv[])
 	GtkWidget *treeview;
 	GtkWidget *bu_add, *bu_remove, *bu_edit, *bu_load, *bu_save, *bu_find;
 
-	init(&argc, &argv);
+	gtk_init(&argc, &argv);
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (window), "LIST");
@@ -341,7 +322,7 @@ int main(int argc, char *argv[])
 	treeview = gtk_tree_view_new_with_model (model);
 	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
 	gtk_tree_view_set_search_column (GTK_TREE_VIEW (treeview),
-					 COLUMN_ID);
+					 COLUMN_NAME);
 	g_object_unref (model);
 
 	gtk_container_add (GTK_CONTAINER (sw), treeview);
@@ -365,10 +346,10 @@ int main(int argc, char *argv[])
 	
 	bu_edit = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	gtk_box_pack_start(GTK_BOX(hbox_button), bu_edit, TRUE, TRUE, 0);
-
+	/*
 	bu_find = gtk_button_new_from_stock(GTK_STOCK_FIND);
 	gtk_box_pack_start(GTK_BOX(hbox_button), bu_find, TRUE, TRUE, 0);
-	
+	*/
 	bu_load = gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(hbox_button), bu_load, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(bu_load), "clicked",
