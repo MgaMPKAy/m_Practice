@@ -4,27 +4,28 @@
 #include <setjmp.h>
 #include <gtk/gtk.h>
 
+#define NUM_LINE 500
 struct student{
-	long id;
+	glong id;
 	char name[20];
-	int engl;
-	int math;
-	int comp;
-	int total;
+	gint engl;
+	gint math;
+	gint comp;
+	gint total;
 };
 enum {
 	COLUMN_ID,
 	COLUMN_NAME,
-	COLUMN_ENGL,
 	COLUMN_MATH,
 	COLUMN_COMP,
+	COLUMN_ENGL,
 	COLUMN_TOTAL,
-	NUM_COLUMNS
+	NUM_COLUMNS,
 };
+
 static GtkTreeIter *find_student(long id);
 static void dialog_add(GtkWidget *, gpointer);
-static void dialog_edit(GtkWidget *, gpointer);
-static int add_student(long id, char *, int, int, int);
+static gboolean add_student(long id, char *, int, int, int, gboolean);
 static void load(void);
 static void save(void);
 
@@ -34,29 +35,49 @@ static GtkTreeModel *model;
 static GtkListStore *store;
 static GtkWidget *treeview;
 static GtkTreeIter iter;
+static GtkTreeSelection *selection;
 
-static int
-add_student(long id, char * name, int math, int comp, int engl)
+static gboolean
+add_student(long id, char * name, int math, int comp, int engl,
+	    gboolean check)
 {
-	struct student *stud = malloc(sizeof(*stud));
-	if (stud == NULL) {
-		printf("ERROR: malloc()\n");
-		return 0;
+	struct student *stud;
+	static int i = NUM_LINE - 1;
+	static struct student *buffer;
+	static gboolean first_time = TRUE;
+	if (first_time) {
+		buffer = malloc(sizeof(struct student) * NUM_LINE);
+		if (buffer == NULL) {
+			printf("ERROR: malloc()\n");
+			return FALSE;
+		}
+		first_time = FALSE;
 	}
-	if (id < 0 || (math > 100 || math < 0)
-	    || (comp > 100 || comp < 0)
-	    || (engl > 100 || engl < 0)
-	    || find_student(id)) {
-		return 0;
+	if (i == 0) {
+		buffer = malloc(sizeof(struct student) * NUM_LINE);
+		if (buffer == NULL) {
+			printf("ERROR: malloc()\n");
+			return FALSE;
+		}
+		i = NUM_LINE - 1;
 	}
+	if (check) {
+		if (id < 0 || (math > 100 || math < 0)
+		    || (comp > 100 || comp < 0)
+		    || (engl > 100 || engl < 0)
+		    || find_student(id)) {
+			return FALSE;
+		}
+	}
+	stud = buffer + i;
 	stud->id = id;
 	strncpy(stud->name, name, 20);
 	stud->name[19] = '\0';
-	stud->engl = engl;
 	stud->math = math;
 	stud->comp = comp;
+	stud->engl = engl;
 	stud->total = engl + math + comp;
-
+	
 	gtk_list_store_prepend(store, &iter);
 	gtk_list_store_set(store, &iter,
 			   COLUMN_ID, stud->id,
@@ -66,7 +87,8 @@ add_student(long id, char * name, int math, int comp, int engl)
 			   COLUMN_ENGL, stud->engl,
 			   COLUMN_TOTAL,stud->total,
 			   -1);
-	return 1;
+	i--;
+	return TRUE;
 }
 
 static void
@@ -121,38 +143,35 @@ dialog_add(GtkWidget *widget, gpointer data)
  	if (response == GTK_RESPONSE_OK) {
 		stud.id = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[0])),
 					   NULL, 10);
+		if (stud.id == 0 || find_student(stud.id)) {
+			gtk_entry_set_text(GTK_ENTRY(entry[0]), "ERROR");
+			goto get_input;
+		}
+		
 		strncpy(stud.name, gtk_entry_get_text(GTK_ENTRY(entry[1])), 20);
 		stud.name[19] = '\0';
 		stud.math = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[2])),
 					     NULL, 10);
-		stud.comp = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[3])),
-					     NULL, 10);
-		stud.engl = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[4])),
-					     NULL, 10);
-		
-		if (stud.id == 0 || find_student(stud.id)) {
-			gtk_entry_set_text(GTK_ENTRY(entry[0]), "ERROR");
-			vaild = FALSE;
-		}
-		if (stud.name[0] == '\0') {
-			gtk_entry_set_text(GTK_ENTRY(entry[1]), "ERROR");
-			vaild = FALSE;
-		}
 		if (stud.math <= 0 || stud.math > 100) {
 			gtk_entry_set_text(GTK_ENTRY(entry[2]), "ERROR");
-			vaild = FALSE;
+			goto get_input;
 		}
+		
+		stud.comp = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[3])),
+					     NULL, 10);
 		if (stud.comp <= 0 || stud.comp > 100) {
 			gtk_entry_set_text(GTK_ENTRY(entry[3]), "ERROR");
-			vaild = FALSE;
+			goto get_input;
 		}
+		
+		stud.engl = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[4])),
+					     NULL, 10);
 		if (stud.engl <= 0 || stud.engl > 100) {
 			gtk_entry_set_text(GTK_ENTRY(entry[4]), "ERROR");
-			vaild = FALSE;
-		}
-		if (!vaild)
 			goto get_input;
-		add_student(stud.id, stud.name, stud.math, stud.comp, stud.engl);
+		}
+		
+		add_student(stud.id, stud.name, stud.math, stud.comp, stud.engl, FALSE);
 	}
 	gtk_widget_destroy (dialog);
 }
@@ -161,7 +180,7 @@ static GtkTreeIter *
 find_student(long id_find)
 {
 	gboolean vaild;
-	long id;
+	glong id;
 	static GtkTreeIter iter;
 
 	vaild = gtk_tree_model_get_iter_first(model, &iter);
@@ -179,27 +198,32 @@ find_student(long id_find)
 
 static void load(void)
 {
-	int score[3], line = 0;
-	long id;
-	char input[80];
-	char name[20];
+	gint score[3];
+	glong id, line = 0, added = 0;
+	gchar input[50];
+	gchar name[20];
+	
 	FILE *fd = fopen("./data", "r");
 	if (fd == NULL) {
 		exit(EXIT_FAILURE);
 	}
-	while (fgets(input, 80, fd) != 0) {
+ 	
+	while (fgets(input, 50, fd) != 0) {
 		line++;
 		if ((sscanf(input, "%ld %d %d %d %s",
-			    &id, score , score + 1, score + 2, name)) != 5) {
-			printf("Error in datafile in line %d\n", line);
+			    &id, score, score + 1,
+			    score + 2, name)) != 5) {
+			g_print("Error Format: Line %ld\n, %s", line, input);
 			continue;
 		}
-		if (!add_student(id, name, score[0], score[1], score[2])) {
-			printf("add error\n");
+		if (!add_student(id, name, score[0],
+				 score[1], score[2], FALSE)) {
+			g_print("Error ADDING: Line %ld\n", line);
 		}
+		added++;
 	}
 	fclose(fd);
-	printf("TOTAL: %d line\n", line);
+	g_print("TOTAL: %ld line. ADDED: %ld\n", line, added);
 }
 
 static void save(void)
@@ -207,11 +231,16 @@ static void save(void)
 	gboolean vaild;
 	GtkTreeIter iter;
 	long id;
-	gchar output[80], *name;
-	int score[3];
+	gchar output[50], *name;
+	gint score[3];
 	FILE *fd;
 
 	fd = fopen("./data", "w");
+	if (fd == NULL) {
+		printf("data file open error\n");
+		return;
+	}
+	
 	vaild = gtk_tree_model_get_iter_first(model, &iter);
 	while (vaild) {
 		gtk_tree_model_get(model, &iter,
@@ -238,8 +267,8 @@ cell_edited(GtkCellRendererText *cell,
 	    gpointer data)
 {
 	GtkTreeIter iter;
-	int math, comp, engl;
-	int score = atoi(new_text);
+	gint math, comp, engl;
+	gint score = atoi(new_text);
 	if (score <= 0 || score > 100)
 		return;
 	gchar *old_text;
@@ -255,11 +284,11 @@ cell_edited(GtkCellRendererText *cell,
 			   -1);
 	gtk_tree_model_get(model, &iter,
 			   COLUMN_MATH, &math,
-			   COLUMN_ENGL, &engl,
 			   COLUMN_COMP, &comp,
+			   COLUMN_ENGL, &engl,
 			   -1);
 	gtk_list_store_set(GTK_LIST_STORE(store), &iter,
-			   COLUMN_TOTAL, math + engl + comp,
+			   COLUMN_TOTAL, math + comp + engl,
 			   -1);
 }
 
@@ -281,7 +310,8 @@ add_columns(GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
-	
+	gint width[] = {100, 180, 90, 90, 90, 90};
+	gfloat align[] = {0, 0, 0, 0, 0, 0};
 	char *column_title[] = {
 		"ID", "Name", "Math", "Computer", "English", "Total"};
 	for (int i = 0; i < NUM_COLUMNS; i++) {
@@ -299,6 +329,10 @@ add_columns(GtkTreeView *treeview)
 								  renderer,
 								  "text", i,
 								  NULL);
+		gtk_tree_view_column_set_sizing(column,
+						GTK_TREE_VIEW_COLUMN_FIXED);
+		gtk_tree_view_column_set_fixed_width(column, width[i]);
+		gtk_tree_view_column_set_alignment(column, align[i]);
 		gtk_tree_view_column_set_sort_column_id(column, i);
 		gtk_tree_view_append_column(treeview, column);
 	}
@@ -308,8 +342,7 @@ static void
 remove_student_cb(GtkWidget *widget, gpointer data)
 {
 	GtkTreeIter iter;
-	GtkTreeView *treeview = (GtkTreeView *)data;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
+	GtkTreeView *treeview = (GtkTreeView *)treeview;
 	
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		
@@ -322,8 +355,7 @@ int main(int argc, char *argv[])
 	
 	GtkWidget *vbox, *hbox_button;
 	GtkWidget *sw;
-	GtkWidget *bu_add, *bu_remove, *bu_edit, *bu_load, *bu_save, *bu_find;
-
+	GtkWidget *bu_add, *bu_remove, *bu_load, *bu_save;
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -350,11 +382,15 @@ int main(int argc, char *argv[])
 	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
 	gtk_tree_view_set_search_column (GTK_TREE_VIEW (treeview),
 					 COLUMN_NAME);
+	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(treeview), TRUE);
 	g_object_unref (model);
 
 	gtk_container_add (GTK_CONTAINER(sw), treeview);
 
 	add_columns(GTK_TREE_VIEW(treeview));
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	//gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
 	
 	/* buttons */
 	hbox_button = gtk_hbox_new(TRUE, 3);
@@ -369,7 +405,7 @@ int main(int argc, char *argv[])
 	bu_remove = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
 	gtk_box_pack_start(GTK_BOX(hbox_button), bu_remove, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(bu_remove), "clicked",
-			 G_CALLBACK(remove_student_cb), treeview);
+			 G_CALLBACK(remove_student_cb), NULL);
 	
 	bu_load = gtk_button_new_from_stock(GTK_STOCK_OPEN);
 	gtk_box_pack_start(GTK_BOX(hbox_button), bu_load, TRUE, TRUE, 0);
