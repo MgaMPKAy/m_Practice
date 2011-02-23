@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		for (; name_len >= 0; name_len--) {
 			name[name_len] = 65 + rand() % 26;
 		}
-		sprintf(output, "%ld %d %d %d %s\n",
+		sprintf(output, "%ld %3d %3d %3d %s\n",
 			3110010000 - n, 1 + rand() % 100, 1 + rand() % 100, 1 + rand() % 100,
 			name);
 		fputs(output, fd);
