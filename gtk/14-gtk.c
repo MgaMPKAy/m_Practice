@@ -35,7 +35,6 @@ static GtkTreeModel *model;
 static GtkListStore *store;
 static GtkWidget *treeview;
 static GtkTreeIter iter;
-static GtkTreeSelection *selection;
 
 static gboolean
 add_student(long id, char * name, int math, int comp, int engl)
@@ -110,59 +109,62 @@ dialog_add(GtkWidget *widget, gpointer data)
 
 	stock = gtk_image_new_from_stock(GTK_STOCK_DIALOG_QUESTION,
 					 GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start(GTK_BOX(hbox), stock, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), stock, TRUE, FALSE, 0);
 
-	table = gtk_table_new(5, 2, TRUE);
-	gtk_table_set_row_spacings(GTK_TABLE (table), 1);
-	gtk_table_set_col_spacings(GTK_TABLE (table), 1);
-	gtk_box_pack_start (GTK_BOX (hbox), table, TRUE, TRUE, 0);
+	table = gtk_table_new(2, 2, TRUE);
+	gtk_table_set_row_spacings(GTK_TABLE (table), 3);
+	gtk_table_set_col_spacings(GTK_TABLE (table), 3);
+	gtk_box_pack_start (GTK_BOX(hbox), table, TRUE, TRUE, 0);
 	
-	for (gint i = 0; i < 5; i++) {
+	/* entry & label for ID*/
+	label[0] = gtk_label_new_with_mnemonic(label_str[0]);
+	entry[0] = gtk_spin_button_new_with_range(0, 10000000000, 10000);
+	gtk_table_attach_defaults (GTK_TABLE (table), label[0],
+				   0, 1, 0, 1);
+	gtk_table_attach_defaults (GTK_TABLE (table), entry[0],
+				   1, 2, 0, 1);
+	/* entry & label for Name*/
+	label[1] = gtk_label_new_with_mnemonic(label_str[1]);
+	entry[1] = gtk_entry_new_with_max_length(19);
+	gtk_table_attach_defaults (GTK_TABLE (table), label[1],
+				   0, 1, 1, 2);
+	gtk_table_attach_defaults (GTK_TABLE (table), entry[1],
+				   1, 2, 1, 2);
+	
+	/* Spinbutton & label for score*/
+	for (gint i = 2; i < 5; i++) {
 		label[i] = gtk_label_new_with_mnemonic(label_str[i]);
 		gtk_table_attach_defaults (GTK_TABLE (table),
 					   label[i],
 					   0, 1, i, i + 1);
-		entry[i] = gtk_entry_new();
+		entry[i] = gtk_spin_button_new_with_range(0, 100, 1);
 		gtk_table_attach_defaults (GTK_TABLE (table), entry[i],
 					   1, 2, i, i + 1);
 		gtk_label_set_mnemonic_widget (GTK_LABEL (label[i]), entry[i]);
 	}
 	gtk_widget_show_all(dialog);
-
+	
  get_input:
 	vaild = TRUE;
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
  	if (response == GTK_RESPONSE_OK) {
-		stud.id = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[0])),
-					   NULL, 10);
+		stud.id = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry[0]));
 		if (stud.id == 0 || find_student(stud.id)) {
-			gtk_entry_set_text(GTK_ENTRY(entry[0]), "ERROR");
+			gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry[0]), 0);
 			goto get_input;
 		}
-		
+		if (gtk_entry_get_text_length(GTK_ENTRY(entry[1])) == 0) {
+			gtk_entry_set_text(GTK_ENTRY(entry[1]), "Error!");
+			goto get_input;
+		}
 		strncpy(stud.name, gtk_entry_get_text(GTK_ENTRY(entry[1])), 20);
 		stud.name[19] = '\0';
-		stud.math = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[2])),
-					     NULL, 10);
-		if (stud.math <= 0 || stud.math > 100) {
-			gtk_entry_set_text(GTK_ENTRY(entry[2]), "ERROR");
-			goto get_input;
-		}
-		
-		stud.comp = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[3])),
-					     NULL, 10);
-		if (stud.comp <= 0 || stud.comp > 100) {
-			gtk_entry_set_text(GTK_ENTRY(entry[3]), "ERROR");
-			goto get_input;
-		}
-		
-		stud.engl = g_ascii_strtoll(gtk_entry_get_text(GTK_ENTRY(entry[4])),
-					     NULL, 10);
-		if (stud.engl <= 0 || stud.engl > 100) {
-			gtk_entry_set_text(GTK_ENTRY(entry[4]), "ERROR");
-			goto get_input;
-		}
-		
+		stud.math = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry[2]));
+				
+		stud.comp = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry[3]));
+				
+		stud.engl = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry[4]));
+				
 		add_student(stud.id, stud.name, stud.math, stud.comp, stud.engl);
 	}
 	gtk_widget_destroy (dialog);
@@ -281,7 +283,6 @@ cell_edited(GtkCellRendererText *cell,
 	gtk_tree_model_get(model, &iter,
 			   column, &old_text,
 			   -1);
-	//g_free(old_text);
 	gtk_list_store_set(GTK_LIST_STORE(store), &iter,
 			   column, atoi(new_text),
 			   -1);
@@ -315,11 +316,11 @@ add_columns(GtkTreeView *treeview)
 	GtkTreeViewColumn *column;
 	gint width[] = {100, 180, 90, 90, 90, 90};
 	gfloat align[] = {0, 0, 0, 0, 0, 0};
-	char *column_title[] = {
+	char *col_title[] = {
 		"ID", "Name", "Math", "Computer", "English", "Total"};
 	for (int i = 0; i < NUM_COLUMNS; i++) {
 		renderer = gtk_cell_renderer_text_new();
-		if (i >= COLUMN_ENGL && i <= COLUMN_COMP) {
+		if (i >= COLUMN_MATH && i <= COLUMN_ENGL) {
 			g_object_set(renderer,
 				     "editable", TRUE,
 				     NULL);
@@ -328,7 +329,7 @@ add_columns(GtkTreeView *treeview)
 			g_object_set_data(G_OBJECT(renderer), "column",
 					  GINT_TO_POINTER(i));
 		}
-		column = gtk_tree_view_column_new_with_attributes(column_title[i],
+		column = gtk_tree_view_column_new_with_attributes(col_title[i],
 								  renderer,
 								  "text", i,
 								  NULL);
@@ -346,7 +347,7 @@ remove_student_cb(GtkWidget *widget, gpointer data)
 {
 	GtkTreeIter iter;
 	GtkTreeView *treeview = (GtkTreeView *)treeview;
-	
+	GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		
 		gtk_list_store_remove(GTK_LIST_STORE(store), &iter);
@@ -372,29 +373,26 @@ int main(int argc, char *argv[])
 	gtk_container_add (GTK_CONTAINER (window), vbox);
 			
 	sw = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw),
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (sw),
 					     GTK_SHADOW_ETCHED_IN);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-					GTK_POLICY_NEVER,
-					GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (sw),
+				       GTK_POLICY_NEVER,
+				       GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX (vbox), sw, TRUE, TRUE, 0);
 
-	model = create_model ();
+	model = create_model();
 
 	treeview = gtk_tree_view_new_with_model (model);
-	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (treeview), TRUE);
-	gtk_tree_view_set_search_column (GTK_TREE_VIEW (treeview),
-					 COLUMN_NAME);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (treeview), TRUE);
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW (treeview),
+					COLUMN_NAME);
 	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(treeview), TRUE);
-	g_object_unref (model);
+	g_object_unref(model);
 
-	gtk_container_add (GTK_CONTAINER(sw), treeview);
+	gtk_container_add(GTK_CONTAINER(sw), treeview);
 
 	add_columns(GTK_TREE_VIEW(treeview));
 
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-	//gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
-	
 	/* buttons */
 	hbox_button = gtk_hbox_new(TRUE, 3);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox_button, FALSE, FALSE, 0);
