@@ -4,13 +4,13 @@
 #include <setjmp.h>
 #include <gtk/gtk.h>
 
-#define NUM_LINE 500
+#define MALLOC_LINE 500
 struct student{
 	glong id;
 	char name[20];
-	gint engl;
 	gint math;
 	gint comp;
+	gint engl;
 	gint total;
 };
 enum {
@@ -25,7 +25,7 @@ enum {
 
 static GtkTreeIter *find_student(long id);
 static void dialog_add(GtkWidget *, gpointer);
-static gboolean add_student(long id, char *, int, int, int, gboolean);
+static gboolean add_student(long id, char *, int, int, int);
 static void load(void);
 static void save(void);
 
@@ -38,15 +38,14 @@ static GtkTreeIter iter;
 static GtkTreeSelection *selection;
 
 static gboolean
-add_student(long id, char * name, int math, int comp, int engl,
-	    gboolean check)
+add_student(long id, char * name, int math, int comp, int engl)
 {
 	struct student *stud;
-	static int i = NUM_LINE - 1;
+	static int i = MALLOC_LINE - 1;
 	static struct student *buffer;
 	static gboolean first_time = TRUE;
 	if (first_time) {
-		buffer = malloc(sizeof(struct student) * NUM_LINE);
+		buffer = malloc(sizeof(struct student) * MALLOC_LINE);
 		if (buffer == NULL) {
 			printf("ERROR: malloc()\n");
 			return FALSE;
@@ -54,20 +53,13 @@ add_student(long id, char * name, int math, int comp, int engl,
 		first_time = FALSE;
 	}
 	if (i == 0) {
-		buffer = malloc(sizeof(struct student) * NUM_LINE);
+		free(buffer);
+		buffer = malloc(sizeof(struct student) * MALLOC_LINE);
 		if (buffer == NULL) {
 			printf("ERROR: malloc()\n");
 			return FALSE;
 		}
-		i = NUM_LINE - 1;
-	}
-	if (check) {
-		if (id < 0 || (math > 100 || math < 0)
-		    || (comp > 100 || comp < 0)
-		    || (engl > 100 || engl < 0)
-		    || find_student(id)) {
-			return FALSE;
-		}
+		i = MALLOC_LINE - 1;
 	}
 	stud = buffer + i;
 	stud->id = id;
@@ -78,7 +70,7 @@ add_student(long id, char * name, int math, int comp, int engl,
 	stud->engl = engl;
 	stud->total = engl + math + comp;
 	
-	gtk_list_store_prepend(store, &iter);
+	gtk_list_store_append(store, &iter);
 	gtk_list_store_set(store, &iter,
 			   COLUMN_ID, stud->id,
 			   COLUMN_NAME, stud->name,
@@ -171,7 +163,7 @@ dialog_add(GtkWidget *widget, gpointer data)
 			goto get_input;
 		}
 		
-		add_student(stud.id, stud.name, stud.math, stud.comp, stud.engl, FALSE);
+		add_student(stud.id, stud.name, stud.math, stud.comp, stud.engl);
 	}
 	gtk_widget_destroy (dialog);
 }
@@ -199,25 +191,36 @@ find_student(long id_find)
 static void load(void)
 {
 	gint score[3];
-	glong id, line = 0, added = 0;
+	glong id, pre_id = 0, line = 0, added = 0;
 	gchar input[50];
 	gchar name[20];
-	
+	gboolean vaild;
+	GtkTreeIter iter;
 	FILE *fd = fopen("./data", "r");
 	if (fd == NULL) {
 		exit(EXIT_FAILURE);
 	}
- 	
+	
+ 	vaild = gtk_tree_model_get_iter_first(model, &iter);
+	while (vaild) {
+		gtk_list_store_remove(GTK_LIST_STORE(store), &iter);
+		vaild = gtk_tree_model_get_iter_first(model, &iter);
+	}
+	
 	while (fgets(input, 50, fd) != 0) {
 		line++;
 		if ((sscanf(input, "%ld %d %d %d %s",
 			    &id, score, score + 1,
 			    score + 2, name)) != 5) {
-			g_print("Error Format: Line %ld\n, %s", line, input);
+			g_print("Error Format: Line %ld %s\n", line, input);
 			continue;
 		}
-		if (!add_student(id, name, score[0],
-				 score[1], score[2], FALSE)) {
+		if (id <= pre_id) {
+			g_print("Error: ID isn't sequential\n");
+			continue;
+		}
+		if (!add_student(pre_id = id, name, score[0],
+				 score[1], score[2])) {
 			g_print("Error ADDING: Line %ld\n", line);
 		}
 		added++;
