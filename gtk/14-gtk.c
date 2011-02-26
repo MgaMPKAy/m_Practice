@@ -35,6 +35,7 @@ static GtkTreeModel *model;
 static GtkListStore *store;
 static GtkWidget *treeview;
 static GtkTreeIter iter;
+static GtkTreeViewColumn *column[NUM_COLUMNS];
 
 static gboolean
 add_student(long id, char * name, int math, int comp, int engl)
@@ -118,7 +119,7 @@ dialog_add(GtkWidget *widget, gpointer data)
 	
 	/* entry & label for ID*/
 	label[0] = gtk_label_new_with_mnemonic(label_str[0]);
-	entry[0] = gtk_spin_button_new_with_range(0, 10000000000, 10000);
+	entry[0] = gtk_spin_button_new_with_range(1, 10000000000, 10000);
 	gtk_table_attach_defaults (GTK_TABLE (table), label[0],
 				   0, 1, 0, 1);
 	gtk_table_attach_defaults (GTK_TABLE (table), entry[0],
@@ -202,13 +203,15 @@ static void load(void)
 	if (fd == NULL) {
 		exit(EXIT_FAILURE);
 	}
-	
+
+	/* remove all items before load to avoid duplicate */
  	vaild = gtk_tree_model_get_iter_first(model, &iter);
 	while (vaild) {
 		gtk_list_store_remove(GTK_LIST_STORE(store), &iter);
 		vaild = gtk_tree_model_get_iter_first(model, &iter);
 	}
 	
+	pre_id = 0;
 	while (fgets(input, 50, fd) != 0) {
 		line++;
 		if ((sscanf(input, "%ld %d %d %d %s",
@@ -226,6 +229,7 @@ static void load(void)
 			g_print("Error ADDING: Line %ld\n", line);
 		}
 		added++;
+		pre_id = id;
 	}
 	fclose(fd);
 	g_print("TOTAL: %ld line. ADDED: %ld\n", line, added);
@@ -235,16 +239,30 @@ static void save(void)
 {
 	gboolean vaild;
 	GtkTreeIter iter;
-	long id;
+	long id = -1, pre_id = -1;
 	gchar output[50], *name;
 	gint score[3];
 	FILE *fd;
-
+	
 	fd = fopen("./data", "w");
 	if (fd == NULL) {
 		printf("data file open error\n");
 		return;
 	}
+	
+	g_signal_emit_by_name(column[0], "clicked");
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		gtk_tree_model_get(model, &iter,
+				   COLUMN_ID, &pre_id, -1);
+	}
+	if (gtk_tree_model_iter_next(model, &iter)) {
+		gtk_tree_model_get(model, &iter,
+				   COLUMN_ID, &id, -1);
+	}
+	if (id != -1 && pre_id > id) {
+		g_signal_emit_by_name(column[0], "clicked");
+	}
+
 	
 	vaild = gtk_tree_model_get_iter_first(model, &iter);
 	while (vaild) {
@@ -313,7 +331,6 @@ static void
 add_columns(GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
-	GtkTreeViewColumn *column;
 	gint width[] = {100, 180, 90, 90, 90, 90};
 	gfloat align[] = {0, 0, 0, 0, 0, 0};
 	char *col_title[] = {
@@ -329,16 +346,16 @@ add_columns(GtkTreeView *treeview)
 			g_object_set_data(G_OBJECT(renderer), "column",
 					  GINT_TO_POINTER(i));
 		}
-		column = gtk_tree_view_column_new_with_attributes(col_title[i],
-								  renderer,
-								  "text", i,
-								  NULL);
-		gtk_tree_view_column_set_sizing(column,
+		column[i] = gtk_tree_view_column_new_with_attributes(col_title[i],
+								     renderer,
+								     "text", i,
+								     NULL);
+		gtk_tree_view_column_set_sizing(column[i],
 						GTK_TREE_VIEW_COLUMN_FIXED);
-		gtk_tree_view_column_set_fixed_width(column, width[i]);
-		gtk_tree_view_column_set_alignment(column, align[i]);
-		gtk_tree_view_column_set_sort_column_id(column, i);
-		gtk_tree_view_append_column(treeview, column);
+		gtk_tree_view_column_set_fixed_width(column[i], width[i]);
+		gtk_tree_view_column_set_alignment(column[i], align[i]);
+		gtk_tree_view_column_set_sort_column_id(column[i], i);
+		gtk_tree_view_append_column(treeview, column[i]);
 	}
 }
 
@@ -346,10 +363,9 @@ static void
 remove_student_cb(GtkWidget *widget, gpointer data)
 {
 	GtkTreeIter iter;
-	GtkTreeView *treeview = (GtkTreeView *)treeview;
-	GtkTreeSelection *selection = gtk_tree_view_get_selection(treeview);
+	GtkTreeSelection *selection =
+		gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-		
 		gtk_list_store_remove(GTK_LIST_STORE(store), &iter);
 	}
 }
@@ -386,7 +402,7 @@ int main(int argc, char *argv[])
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW (treeview), TRUE);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW (treeview),
 					COLUMN_NAME);
-	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(treeview), TRUE);
+	//gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(treeview), TRUE);
 	g_object_unref(model);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
