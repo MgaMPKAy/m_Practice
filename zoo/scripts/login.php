@@ -4,14 +4,15 @@ include_once('db-common.php');
 function login_with_name($user_name, $user_passwd)
 {
 	$db = connect_db();
-	
+	/*
 	if (is_anyone_logined($db))
 		throw new Exception ('已经经登录了');
+	*/
 	if (!valid_name_sha1_passwd($user_name, sha1($user_passwd)))
 		throw new Exception ('登录失败...');
 	setcookie("user_name", $user_name,
 		  time() + 60 * 60 * 24 * 30);
-	setcookie("user_passwd", sha1($user_name),
+	setcookie("user_passwd", sha1($user_passwd),
 		  time() + 60 * 60 * 24 * 30);
 	$db->close();
 }
@@ -52,9 +53,10 @@ function is_anyone_logined()
 	if (isset($_COOKIE)
 	    && isset($_COOKIE['user_name'])
 	    && isset($_COOKIE['user_passwd'])) {
-		$valid =  valid_name_sha1_passwd($_COOKIE['user_name'],
+		$valid = valid_name_sha1_passwd($_COOKIE['user_name'],
 						 $_COOKIE['user_passwd']);
 		$db->close();
 		return $valid;
 	}
+	return FALSE;
 }

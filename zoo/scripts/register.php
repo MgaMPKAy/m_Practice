@@ -11,20 +11,19 @@ function register($user_name, $user_email, $user_passwd)
 	
 	$result = $db->query($query);
 	if (!$result)
-		throw new Exception('Could not execute query');
+		throw new Exception('查询数据库出错');
 	if ($result->num_rows>0) {
 		throw new Exception('真的很对不起，这个用户名已经被注册了...');
 	}
 	
 	/* 检查user_email是否被注册 */
-	$query = 'SELECT user_passwd FROM Users '
+	$query = 'SELECT user_email FROM Users '
 		."WHERE user_email='$user_email'";
 	$result = $db->query($query);
-	if (!$result) {
-		throw new Exception('Could not execute query');
-		if ($result->num_rows>0) {
-			throw new Exception('真的很对不起，这个邮箱已经被注册了...');
-		}
+	if (!$result)
+		throw new Exception('查询数据库出错');
+	if ($result->num_rows>0) {
+		throw new Exception('真的很对不起，这个邮箱已经被注册了...');
 	}
 	/* 记录到数据库 */
 	$query = 'INSERT INTO Users '

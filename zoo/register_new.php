@@ -47,7 +47,7 @@ catch (Exception $e) {
 		"<h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>";
 	echo $display_block;
 	echo "<h2>注册失败了</h2>";
-	echo $e->getMessage();
+	echo $e->getMessage()."<br />";
 	echo "<a href='register_form.php'>再来一次试试</a>";
 	exit();
 }
