@@ -28,7 +28,7 @@ function register($user_name, $user_email, $user_passwd)
 	/* 记录到数据库 */
 	$query = 'INSERT INTO Users '
 		.'(user_id, user_name, user_email, user_passwd) VALUES '
-		."(NULL, '$user_name', '$user_email', sha1('".$user_passwd."'))";
+		."(NULL, '$user_name', '$user_email', md5('".$user_passwd."'))";
 	$result = $db->query($query);
 	if (!$result) {
 		throw new Exception('又失败了');
