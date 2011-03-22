@@ -47,7 +47,7 @@ CREATE TABLE Mood_Comments (
 	user_id MEDIUMINT,
 	mood_id INT,
 	time DATETIME,
-	comment VARCHAR(255),
+	comment VARCHAR(255)
 	);
 
 CREATE TABLE Messages (
@@ -62,7 +62,7 @@ CREATE TABLE Log (
        log_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
        user_id MEDIUMINT,
        activity_type TINYINT,
-       target INT,
+       target INT
        	);
 
 CREATE TABLE Friends (

@@ -10,6 +10,7 @@
 		      ."<a href='logout.php'>退出</a>吧</p>";
       } else {
     ?>
+    <div style="text-align: center"> 
     <h1>登录</h1>
     <form method=post action=login_handle.php>
       <p>姓名<br/>
@@ -24,6 +25,7 @@
 	<a href='register_form.php'>忘记重要的Zoo密码？</a>
       </p>
     </form>
+    </div>
     <?php
       }
     ?>

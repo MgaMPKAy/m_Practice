@@ -1,3 +1,5 @@
 <?php
-echo "Hello<br/>"
+require_once('zoo-inc.php');
+
+get_comment_ids(123);
 ?>
