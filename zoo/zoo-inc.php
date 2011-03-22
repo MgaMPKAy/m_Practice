@@ -1,1 +1,0 @@
-/var/www/lighttpd/mga-zoo/scripts/zoo-inc.php
