@@ -40,9 +40,11 @@ catch (Exception $e)
     }
     echo "<form method='post' action='mood_add_handle.php'>";
     echo "<textarea rows='3' cols='80' name='mood' autofocus='true' >随便说点什么</textarea>";
-    echo '<p><input type="submit"  value="发布心情" /><br/></p>';
+    if ($page_user_id == $logined_user_id)
+	    echo '<p><input type="submit"  value="发布心情" /><br/></p>';
     echo "</form>";
-    echo "<a href=./article_add_form.php>写日志</a>";
+    if ($page_user_id == $logined_user_id)
+	    echo "<a href=./article_add_form.php>写日志</a>";
     echo "<p><mark>最新日志:</mark> ";
     if (empty($article_ids)) {
 	    echo "还没写过日志呢";

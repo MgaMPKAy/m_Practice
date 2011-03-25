@@ -50,6 +50,8 @@ function article_delete($article_id)
 	$query = 'DELETE FROM Articles '
 		."WHERE article_id = '$article_id'";
 	$result = $db->query($query);
+	if ($db->affected_rows == 0)
+		throw new Exception ("数据库查询失败"); // Not necessary
 	$db->close();
 }
 function article_update($article_id, $title, $content, $permission)
@@ -73,6 +75,11 @@ function get_article_content_assoc($article_id)
 	return $row;
 }
 
+function get_article_ower_id($article_id)
+{
+	$article = get_article_content_assoc($article_id);
+	return $article['user_id'];
+}
 // of no use
 
 function get_article_ids($user_id, $count)

@@ -8,6 +8,9 @@ try {
 		throw new Exception("URL出错了");
 	@ $article_id = $_GET['article_id'];
 	@ $user_id = $_COOKIE['user_id'];
+	@ $article_owner_id = get_article_ids($article_id);
+	if ($article_owner_id != $user_id)
+		throw new Exception("没有删除权限");
 	article_delete($article_id);
 	
 	echo "<p>删除成功</p>";
@@ -16,4 +19,5 @@ try {
 catch (Exception $e)
 {
 	echo "<p>删除失败</p>";
+	echo $e->getMessage();
 }

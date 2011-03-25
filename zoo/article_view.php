@@ -14,8 +14,10 @@ try {
 	echo "<h1>".$article['title']."</h1>";
 	echo "<p>".$article['text']."<p><br/>";
 	echo "<p><mark>发布于</mark>".$article['time']."<p>";
-	echo "<p><a href='./article_edit_form.php?article_id=$article_id' >编辑</a>or"; //TODO AJAX EDIT
-	echo "<a href='./article_delete.php?article_id=$article_id' >删除</a></p>";
+	if ($article['user_id'] == $user_id) {
+		echo "<p><a href='./article_edit_form.php?article_id=$article_id' >编辑</a>or"; //TODO AJAX EDIT
+		echo "<a href='./article_delete.php?article_id=$article_id' >删除</a></p>";
+	}
 	echo "<p>评论:</p>";
 	// TODO echo article that contain PHP code
 	echo "<form method='post' action='comment_add_handle.php'>";
