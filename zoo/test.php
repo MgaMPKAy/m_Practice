@@ -1,5 +1,7 @@
 <?php
 require_once('zoo-inc.php');
 
-get_comment_ids(123);
+$new = htmlspecialchars("<a href='test'>Test</a>", ENT_QUOTES);
+echo $new;
+
 ?>

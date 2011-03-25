@@ -63,17 +63,34 @@ function login_with_name($user_name, $user_passwd)
 	/* setcookie("user_name", $user_name,
 		  time() + 60 * 60 * 24 * 30);
 	*/
-	return TRUE;
+	return $user_id;
+}
+
+function valid_user_id($user_id)
+{
+	$db = connect_db();
+	
+	$query = 'SELECT user_id FROM Users '
+		."WHERE user_id = $user_id";
+	
+	$result = $db->query($query);
+	if ($result)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 // of no use
-function check_user_name($user_name, $db)
+function check_user_name($user_name)
 {
+	$db = connect_db();
+	
 	$query = 'SELECT user_name FROM Users'
 		."$user_name";
 	$result = $db->query($query);
-		
-	if ($result->num_rows > 0)
+
+	
+	if ($result)
 		return TRUE;
 	else
 		return FALSE;

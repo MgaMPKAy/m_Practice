@@ -1,8 +1,9 @@
 <html>
   <head>
     <title>注册</title>
+    <script src="/mga-zoo/scripts/register.js"></script>
   </head>
-  <body>
+  <body background="/mga-zoo/images/v.png">
     <?php
       include('zoo-inc.php');
       if (is_anyone_logined()) {
@@ -11,9 +12,9 @@
       } else {
     ?>
     <h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>
-    <form method='post' action='register_handle.php'>
+    <form name='register_form' method='post' action='register_handle.php' onsubmit='return validate_form()'>
       <p>姓名<br/>
-      <input type='text' name='user_name' maxlength=20/></p>
+      <input type='text' name='user_name' maxlength=20 />
       <p>邮箱<br/>
       <input type='text' name='user_email' maxlength=50/></p>
       <p>密码<br/>

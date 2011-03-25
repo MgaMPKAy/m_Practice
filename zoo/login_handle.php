@@ -11,14 +11,14 @@ try {
 		throw new Exception('请正确填写全部注册信息');
 	}
 
-	login_with_name($user_name, $user_passwd);
+	$user_id = login_with_name($user_name, $user_passwd);
 	
 	$display_block =
 		'<body background="/mga-zoo/images/v.png/">'
 		.'<h1>登录Zoo</h1>'
 		."<p>登录成功</p>";
 	echo $display_block;
-	echo "<a href='home.php'>查看个人主页</a><br/>";
+	echo "<a href='home.php?user_id=$user_id'>查看个人主页</a><br/>";
 	echo "<//bodu>";
 	//header("Location：http://localhost/mga-zoo/home.php");
 	exit();

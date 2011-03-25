@@ -1,20 +1,25 @@
 <?php
 include('zoo-inc.php');
-@$user_email=$_POST['user_email'];
-@$user_name=$_POST['user_name'];
-@$user_passwd=$_POST['user_passwd'];
-@$user_passwd2=$_POST['user_passwd2'];
 
-if (!isset($_POST)) {
-	exit;
-}
+@ $user_email=$_POST['user_email'];
+@ $user_name=$_POST['user_name'];
+@ $user_passwd=$_POST['user_passwd'];
+@ $user_passwd2=$_POST['user_passwd2'];
+
 try {
-	if (!filled_out($_POST)) {
+	if ($user_email == NULL || $user_name == NULL
+	    ||$user_passwd2 == NULL|| $user_passwd == NULL)
 		throw new Exception('请正确填写全部注册信息');
-	}
+	$user_name = rtrim(trim($user_name));
+	if (!valid_name_input($user_name))
+		throw new Exception('User name含非法字符');
+
+	$user_email = rtrim(trim($user_email));
 	if (!valid_email($user_email)) {
 		throw new Exception('email的格式不对哦');
 	}
+	
+	$user_passwd = rtrim(trim($user_passwd));
 	if ($user_passwd != $user_passwd2) {
 		throw new Exception('二次密码不一样哦....');
 	}
@@ -25,14 +30,15 @@ try {
 		throw new Exception('密码很给力，不过密码最多16位');
 	}
 	
-	register($user_name, $user_email, $user_passwd);
+	$user_id = register($user_name, $user_email, $user_passwd);
 
 	$display_block = 
-		"<h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>";
+		'<body background="/mga-zoo/images/v.png">'
+		."<h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>";
 	echo $display_block;
 	echo "注册成功!!!<br/>";
 	echo "<a href='about.php'>完善个人信息</a><br/>";
-	echo "<a href='home.php'>查看个人主页</a><br/>";
+	echo "<a href='home.php?user_id=$user_id'>查看个人主页</a><br/>";
 	echo "<a href='logout.php'>退出登录</a><br/>";
 	try {
 		login_with_name($user_name, $user_passwd);
@@ -44,8 +50,9 @@ try {
 }
 catch (Exception $e)
 {
-	$display_block = 
-		"<h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>";
+	$display_block =
+		'<body background="/mga-zoo/images/v.png">'
+		."<h1>注册属于你的<strike>QQ</strike>Zoo<strike>ne</strike></h1>";
 	echo $display_block;
 	echo "<h2>注册失败了</h2>";
 	echo $e->getMessage()."<br />";

@@ -1,8 +1,21 @@
 <?php
 require_once('db-common.php');
+require_once('login.php');
 
-function comment_add($article_id)
+function comment_add($article_id, $comment)
 {
+	if (!is_anyone_logined())
+		throw new Exception("登录啊");
+	$db = connect_db();
+
+	$user_id = $_COOKIE['user_id'];
+	date_default_timezone_set('Asia/Hong_Kong');
+	$datetime = date("Y-m-d g:i:s");
+	
+	$query = 'INSERT INTO Comments VALUES('
+		."NULL,'$user_id' ,'$article_id', '$datetime', '$comment')";
+	$result = $db->query($query);
+	$db->close();
 }
 
 // oop maybe better

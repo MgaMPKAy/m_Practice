@@ -44,7 +44,14 @@ function article_add($title, $content, $permission)
 	return $article_id;
 }
 
-
+function article_delete($article_id)
+{
+	$db = connect_db();
+	$query = 'DELETE FROM Articles '
+		."WHERE article_id = '$article_id'";
+	$result = $db->query($query);
+	$db->close();
+}
 function article_update($article_id, $title, $content, $permission)
 {
 	
@@ -66,7 +73,28 @@ function get_article_content_assoc($article_id)
 	return $row;
 }
 
-function get_articles_id($count)
+// of no use
+
+function get_article_ids($user_id, $count)
 {
-	return $_GET['article_id'];
+	$db = connect_db();
+
+	$query = 'SELECT article_id FROM Articles '
+		."WHERE user_id = $user_id";
+	//TODO  $query shuld be sorted by datatime , limit
+	$result = $db->query($query);
+
+	$article_ids = array();
+	for ($i = 0; $i < $count && $row = $result->fetch_row(); $i++)
+		$article_ids[] = $row[0];
+	$db->close();
+	return $article_ids;
 }
+
+function build_article_url($article_id, $article_title)
+{
+	$url =  "<a href='article_view.php?article_id=$article_id'>"
+		."$article_title</a>";
+	return $url;
+}
+			

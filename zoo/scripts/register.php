@@ -30,10 +30,16 @@ function register($user_name, $user_email, $user_passwd)
 		.'(user_id, user_name, user_email, user_passwd) VALUES '
 		."(NULL, '$user_name', '$user_email', md5('".$user_passwd."'))";
 	$result = $db->query($query);
+
 	if (!$result) {
 		throw new Exception('又失败了');
 	}
-	return true;
+	/* get user_id */
+	$query = 'SELECT user_id FROM Users '
+		."WHERE user_name = '$user_name'";
+	$result = $db->query($query);
+	$row = $result->fetch_row();
+	return $row[0];
 }
 
 function filled_out($form_vars) {
