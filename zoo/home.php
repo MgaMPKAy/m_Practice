@@ -2,7 +2,7 @@
 require_once('zoo-inc.php');
 try {
 	if (!is_anyone_logined())
-		throw new Exception ("没登录");
+		throw new Exception ("没<a href=./login_form.php>登录</a>");
 	$logined_user_id = $_COOKIE['user_id'];
 	
 	$page_user_id = $_GET['user_id'];
@@ -30,21 +30,34 @@ catch (Exception $e)
 <html>
   <head>
     <style>
+      textarea#mood_input {
+      background-color : #EFE;
+      width : 500px;
+      height: 40px;
+      }
     </style>
+    <script src="/mga-zoo/scripts/moods.js"></script>
   </head>
   <?php
     echo '<body background="/mga-zoo/images/v.png/">';
     echo "<h1><mark>".$page_user_name."</mark>的个人主页</h1>";
-    if (!empty($recent_mood_id)) {
-	    echo "<p>最近心情: ".$recent_mood['mood']."</p>";
+    if ($page_user_id != $logined_user_id) {
+	    echo "<a href='./follow_handle.php'>关注</a>";
     }
-    echo "<form method='post' action='mood_add_handle.php'>";
-    echo "<textarea rows='3' cols='80' name='mood' autofocus='true' >随便说点什么</textarea>";
-    if ($page_user_id == $logined_user_id)
-	    echo '<p><input type="submit"  value="发布心情" /><br/></p>';
-    echo "</form>";
-    if ($page_user_id == $logined_user_id)
+    echo "<p>最近心情: ";
+    if (!empty($recent_mood)) {
+	    echo "<span id='mood_show'><b>{$recent_mood['mood']}</b></sapn></p>";
+    } else {
+	    echo "<span id='mood_show'><b></b></sapn></p>";
+    }
+    if ($page_user_id == $logined_user_id) {
+	    //echo "<form method='post' action='mood_add_handle.php'>";
+	    //echo "<form>";
+	    echo "<textarea id='mood_input' autofocus='true' maxlength='50'>say something</textarea>";
+	    echo '<p><input type="button" value="发布心情" onclick="add_mood_show()"/><br/></p>';
+	    //echo "</form>";
 	    echo "<a href=./article_add_form.php>写日志</a>";
+    }
     echo "<p><mark>最新日志:</mark> ";
     if (empty($article_ids)) {
 	    echo "还没写过日志呢";

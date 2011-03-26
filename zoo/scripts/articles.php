@@ -56,7 +56,16 @@ function article_delete($article_id)
 }
 function article_update($article_id, $title, $content, $permission)
 {
-	
+	$db = connect_db();
+	$query = "UPDATE Article "
+		."SET title = '{$title}'"
+		."SET permission = '{$permission}'"
+		."SET text = '{$content}'";
+	$result = $db->query($query);
+
+	if ($db->affected_rows == 0)
+		throw new Exception("数据库查询失败");
+	$db->close();
 }
 
 function get_article_content_assoc($article_id)

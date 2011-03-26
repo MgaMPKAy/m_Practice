@@ -74,7 +74,7 @@ function valid_user_id($user_id)
 		."WHERE user_id = $user_id";
 	
 	$result = $db->query($query);
-	if ($result)
+	if ($result->num_rows > 0)
 		return TRUE;
 	else
 		return FALSE;
@@ -90,7 +90,7 @@ function check_user_name($user_name)
 	$result = $db->query($query);
 
 	
-	if ($result)
+	if ($result->num_rows > 0)
 		return TRUE;
 	else
 		return FALSE;
