@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+void revsers_print(char *str)
+{
+	if (strlen(str) == 0)
+		return;
+	else {
+		revsers_print(str + 1);
+		printf("%c", *str);
+	}
+}
+
+int main(void)
+{
+	char str[80];
+
+	printf("A string: ");
+	scanf("%s", str);
+	printf("Reversed: ");
+	revsers_print(str);
+	printf("\n");
+	return 0;
+}
