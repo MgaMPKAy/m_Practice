@@ -3,12 +3,9 @@
 
 void revsers_print(char *str)
 {
-	if (strlen(str) == 0)
-		return;
-	else {
+	if (strlen(str) != 0)
 		revsers_print(str + 1);
-		printf("%c", *str);
-	}
+	printf("%c", *str);
 }
 
 int main(void)
