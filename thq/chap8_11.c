@@ -15,7 +15,7 @@ int main(void)
 	printf("N = ");
 	scanf("%d", &n);
 	if (0 == n % 2) {
-		printf("ERROR, n shoule be 1 3 5 7 9\n");
+		printf("ERROR, n shoule be 1 3 5 7 9 ...(2k + 1)\n");
 		return 1;
 	}
 	printf("%.0f\n", mul(n));

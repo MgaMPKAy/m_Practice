@@ -19,13 +19,13 @@ void  modify(char *str)
 	}
 	str[0] = t;
 	
-	modify(str + 1);
+	//modify(str + 1);
 }
 
 int main(void)
 {
 	char str[80];
-
+	
 	printf("A String:  ");
 	scanf("%s", str);
 	modify(str);

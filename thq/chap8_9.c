@@ -15,10 +15,10 @@ long func(long n)
 int main(void)
 {
 	long num;
-
+	
 	printf("long int num = ");
 	scanf("%ld", &num);
-
+	
 	printf("Result: %ld\n", func(num));
 	
 	return 0;

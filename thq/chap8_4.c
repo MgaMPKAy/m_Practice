@@ -11,11 +11,13 @@ void revsers_print(char *str)
 int main(void)
 {
 	char str[80];
-
+	
 	printf("A string: ");
 	scanf("%s", str);
+	
 	printf("Reversed: ");
 	revsers_print(str);
+	
 	printf("\n");
 	return 0;
 }
