@@ -3,8 +3,14 @@
 
 long my_atoi(long acc ,char *str)
 {
-	if (*str == 0) {
-		return acc;
+	static int sign = 1;
+	if (*str == '-') {
+		sign = -1;
+		str++;
+	}
+	
+	if (*str == '\0') {
+		return acc * sign;
 	} else {
 		return my_atoi(acc * 10 + *str - '0', str + 1);
 	}
