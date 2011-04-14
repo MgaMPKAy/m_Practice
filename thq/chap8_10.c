@@ -1,25 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-void itoa_r(long num, char *str)
+long my_atoi(long acc ,char *str)
 {
-	int n = num, w = 1;
-	if (num < 0) {
-		str[0] = '-';
-		itoa_r(num * -1, str + 1);
-		return;
-	}
-	if (num < 10){
-		*str = n + '0';
-		*(str + 1) = '\0';
+	if (*str == 0) {
+		return acc;
 	} else {
-		while (n >= 10){
-			n /= 10;
-			w *= 10;;
-		}
-		*str = n + '0';
-		
-		itoa_r( num - n * w, str + 1);
+		return my_atoi(acc * 10 + *str - '0', str + 1);
 	}
 }
 
@@ -28,14 +15,12 @@ int main(void)
 	long a, i;
 	char str[20];
 
-	printf("A Int: ");
-	scanf("%ld", &a);
+	printf("A Number String(str): ");
+	scanf("%s", str);
 
-	itoa_r(a, str);
+	a = my_atoi(0, str);
 
-	printf("A string: ");
-	for (i = 0; i < strlen(str); i++)
-		printf("%c ", str[i]);
-	printf("\n");
+	printf("A INT(a): %ld\n", a);
+
 	return 0;
 }
