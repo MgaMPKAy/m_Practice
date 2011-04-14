@@ -13,12 +13,10 @@ int main(void)
 		       {0, 0, 0, 0},
 		       {0, 0, 0, 0}};
 	int i, j;
-	int *pa = (int *)a;
-	int *pb = (int *)b;
-	
+
 	for (i = 0; i < M * N; i++) {
 		for (j = 0; j < M * N; j++) {
-			if (pa[i] == pb[j]) {
+			if ((int *)a[i] == (int *)b[j]) {
 				printf("YES\n");
 				return 0;
 			}
