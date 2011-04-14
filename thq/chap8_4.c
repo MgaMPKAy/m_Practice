@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <string.h>
 
 void revsers_print(char *str)
 {
-	if (strlen(str) != 0)
+	if (*str != 0)
 		revsers_print(str + 1);
 	printf("%c", *str);
 }
