@@ -8,9 +8,9 @@ void print_usage(FILE *stream, int exit_code)
 {
 	fprintf(stream, "Usage :%s options [inputfile ...]\n", program_name);
 	fprintf(stream,
-		" -h --help              Display help info\n"
-		" -o --output filename   Display help info\n"
-		" -v --help Display help info\n");
+		" -h  --help              Display help info\n"
+		" -o  --output filename   Write output filename\n"
+		" -v  --verbose           Print verbose message\n");
 	exit(exit_code);
 }
 
@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 {
 	int next_option;
 	
+	const char * const short_options = "ho:v";
 	const struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
 	{"output", 1, NULL, 'o'},
@@ -30,6 +31,8 @@ int main(int argc, char *argv[])
 	program_name = argv[0];
 	
 	do {
+		next_option = getopt_long (argc, argv, short_options,
+					   long_options, NULL);
 		switch (next_option) {
 		case 'h':
 			print_usage(stdout, 0);
