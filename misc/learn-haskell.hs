@@ -33,3 +33,25 @@ hanoi n a b c
       | otherwise = (hanoi (n - 1) a c b)
                     ++ a ++ "->" ++ c ++ " "
                     ++ (hanoi (n - 1) b a c)
+
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial n
+          | n > 0 = n * factorial (n - 1)
+
+factorial' n = foldl1 (*) [1..n]
+
+factorial'' n = product [1..n]
+
+factorial''' = product . enumFromTo 1
+
+factorial'''' n = (foldr (.) id [\x -> x * k | k <- [1..n]]) 1
+
+fibs = 0 : 1 : zipWith (+) fibs (tail fibs)
+
+fibs' = 0 : 1 : [a + b | (a, b) <- zip fibs' (tail fibs)]
+
+primes m = 2 : sieve [3,5..m]
+       where sieve (x:xs)
+                   | x * x > m = x : xs
+                   | otherwise = x : sieve (xs [x*x, x*x+2*x..m])
