@@ -1,0 +1,85 @@
+CREATE DATABASE zoo2;
+USE zoo2;
+
+CREATE TABLE Users (
+	user_id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_email VARCHAR(50) UNIQUE NOT NULL,
+	user_name VARCHAR(20) UNIQUE NOT NULL,
+	user_nickname VARCHAR(20),
+	user_birthday DATE,
+	user_about VARCHAR(255),
+	user_tel VARCHAR(15),
+	user_city TINYINT,
+	user_province TINYINT,
+	user_permission SMALLINT,
+	user_passwd CHAR(40) NOT NULL,
+	view_count INT
+	);
+
+CREATE TABLE Posts ( 
+	post_id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+	user_id MEDIUMINT,
+	title VARCHAR(50),
+	content TEXT,
+	permission CHAR(1),
+	time DATETIME,
+	tag_id INT,
+	article_view_count INT
+	);
+
+CREATE TABLE Comments (
+	comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+	user_id MEDIUMINT,
+	post_id MEDIUMINT,
+	time DATETIME,
+	content TEXT
+	);
+
+CREATE TABLE Moods (
+	mood_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id MEDIUMINT,
+	content VARCHAR(255),
+	time DATETIME
+	);
+
+CREATE TABLE Mood_Comments (
+	mood_comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+	user_id MEDIUMINT,
+	mood_id INT,
+	time DATETIME,
+	comment VARCHAR(255)
+	);
+
+CREATE TABLE Messages (
+       message_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+       from_id MEDIUMINT,
+       to_id  MEDIUMINT,
+       type TINYINT,
+       content TEXT
+       );
+
+CREATE TABLE Logs (
+       log_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+       user_id MEDIUMINT,
+       activity_type TINYINT,
+       target INT
+       	);
+
+CREATE TABLE Friends (
+	user_id MEDIUMINT,
+	friend_id MEDIUMINT,
+	friend_view_count INT,
+	group_id INT
+);
+
+CREATE TABLE Friend_Groups ( 
+	group_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id MEDIUMINT,
+	group_name VARCHAR(25)
+	);
+
+CREATE TABLE Article_Tags (
+	tag_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	user_id MEDIUMINT,
+	tag VARCHAR(25)
+	);

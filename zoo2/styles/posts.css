@@ -1,0 +1,49 @@
+#content {
+    position: relative;
+}
+
+#left {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 0;
+    border-style: solid;
+    border-width :1px;
+    border-color: red;
+}
+
+#menu {
+    position: relative;
+    border-style: solid;
+    border-width :1px;
+    border-color: red;
+    margin: 0;
+    padding: 0;
+    width: 100px;
+}
+
+#menu li {
+    list-style: none;
+}
+
+#menu li a{
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+#menu li a:hover{
+    background-color: yellow;
+}
+
+#inner-content {
+    border-style: solid;
+    border-width :2px;
+    border-color: red;
+    position: relative;
+    top: 10px;
+    left: 120px;
+    width: 80%;
+    padding: 5px;
+    margin: 5px , auto;
+    height: 100%
+}
