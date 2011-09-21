@@ -1,0 +1,216 @@
+<html>
+  <head>
+    <title>A Simple Calculator</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready( function() {
+	  var num1, num2, op;
+	  var nums = 0; inputFlag = false;
+	  op = id;
+	  $(".num").children("input").each( function(i, e) {
+	      $(e).click( function() {
+		  if (inputFlag) {
+		      $("#input").val($(e).val());
+		      inputFlag = false;
+		  }  else {
+		      $("#input").val($("#input").val() + $(e).val())
+		  }
+	      })
+	  });
+
+	  $("#equal").click(function() {
+	      num2 = parseFloat($("#input").val(), 10);
+	      var result = op(num1, num2);
+	      $("#input").val(result);
+	      inputFlag = true;
+	      op = id;
+	      num2 = NaN;
+	      num1 = result;
+	      nums = 0;
+	      $("#msg").html("");
+	  })
+
+	  // TODO 下面太多重复代码
+	  $("#add").click( function() {
+	      bicalc(add, "+");
+	  });
+
+	  $("#sub").click( function() {
+	      bicalc(sub, "-");
+	  });
+
+	  $("#mul").click( function() {
+	      bicalc(mul, "*");
+	  });
+
+	  $("#div").click( function() {
+	      bicalc(div, "/");
+	  });
+
+	  $("#C").click( function() {
+	      $("#input").val("");
+	      op = id;
+	      nums = 0;
+	      num1 = num2 = NaN;
+	      inputFlag = false;
+	      $("#msg").html("");
+	  });
+
+
+	  $("#sin").click( function() {
+	      var cur = parseFloat($("#input").val(), 10);
+	      if (!isNaN(cur)) {
+		  cur = Math.sin(cur);
+		  $("#input").val(cur)
+	      }
+	  });
+
+	  $("#cos").click( function() {
+	      var cur = parseFloat($("#input").val(), 10);
+	      if (!isNaN(cur)) {
+		  cur = Math.cos(cur);
+		  $("#input").val(cur)
+	      }
+	  });
+
+	  $("#tan").click( function() {
+	      var cur = parseFloat($("#input").val(), 10);
+	      if (!isNaN(cur)) {
+		  cur = Math.tan(cur);
+		  $("#input").val(cur)
+	      }
+	  });
+
+	  $("#del").click( function() {
+	      var input = $("#input").val();
+	      if (input.length >= 1) {
+		  $("#input").val(input.substr(0, input.length - 1));
+	      }
+	  });
+
+	  $("#abs").click( function() {
+	      var input = parseFloat($("#input").val(), 10);
+	      if (input < 0) input = input * (-1);
+	      $("#input").val(input);
+	  });
+
+	  bicalc = function(_op, msg) {
+	      inputFlag = true;
+
+	      $("#msg").html(msg);
+
+	      if (nums == 0) {
+		  num1 = parseFloat($("#input").val(), 10);
+	      } else if (nums == 1) {
+		  num2 = parseFloat($("#input").val(), 10);
+	      }
+	      nums++;
+	      if (nums == 2) {
+		  var result = op(num1, num2);
+		  $("#input").val(result);
+		  num1 = result;
+		  nums = 1;
+	      }
+	      op = _op;
+	  }
+
+      });
+
+
+      add = function(a, b) {return a + b;}
+      div = function(a, b) {return a / b;}
+      sub = function(a, b) {return a - b;}
+      mul = function(a, b) {return a * b;}
+      id  = function(a, b) {return $("#input").val()};
+
+
+      </script>
+      <style type="text/css" media="screen">
+#main {
+    position: relative;
+    border-radius: 9px;
+    background-color: #fef3ff;
+    display:inline-block;
+    padding: 0.5em;
+    margin-left:auto;
+    margin-right:auto:
+}
+#input {
+    margin-left:auto;
+    margin-right:auto;
+    background-color: white;
+    width: 300px;
+    font-size: large;
+    margin: 10px;
+    border-radius: 4px;
+    border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+.button {
+    xdisplay: inline-block;
+    white-space: nowrap;
+    background-color: #ccc;
+    background-image: -webkit-linear-gradient(top, #eee, #ccc);
+    background-image: linear-gradient(topm $eeem #ccc);
+    border: 1px solid #777;
+    padding: 0 1.5em;
+    margin: 0.5em;
+    font: bold 1em/2em Arial, Helvetica;
+    text-decoration: none;
+    color: #333;
+    text-shadow: 0 1px rgba(255, 255, 255, 0);
+    border-radius: .2em;
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, 8) inset, 0.05em 0 rgba(0,0,0,3)
+}
+.button:hover {
+    background-color: #ddd;
+    background-image: -webkit-linear-gradient(top, #fafafa, #ddd);
+    background-image: linear-gradient(top, #fafafa, #ddd);
+}
+#bu-container {margin:auto;}
+.num {background-color: #f4feff;}
+.op {background-color: transparent}
+      </style>
+  </head>
+  <body>
+    <div id="main">
+      <input type="text" id="input" value=""  disabled="disabled"/>
+      <span id="msg"></span>
+      <div id="bu-container">
+
+	<div class="num">
+	  <input type="button"  value="1" class="button"/>
+	  <input type="button"  value="2" class="button"/>
+	  <input type="button"  value="3" class="button"/>
+
+	  <input type="button"  value="4" class="button"/>
+	  <input type="button"  value="5" class="button"/> <br />
+	  <input type="button"  value="6" class="button"/>
+
+	  <input type="button"  value="7" class="button"/>
+	  <input type="button"  value="8" class="button"/>
+	  <input type="button"  value="9" class="button"/>
+	  <input type="button"  value="0" class="button"/>   <br />
+	  <input type="button"  value="." class="button"/>
+	  <input type="button"  value="-" class="button"/>
+	</div>
+
+	<div class="op">
+	  <input type="button" id="equal" value="=" class="button"/>
+	  <input type="button"  value="+" id="add" class="button"/>
+	  <input type="button"  value="-" id="sub" class="button"/>
+	  <input type="button"  value="*" id="mul" class="button"/>
+	  <input type="button"  value="/" id="div" class="button"/> <br />
+	  <input type="button"  value="Sin" id="sin" class="button"/>
+	  <input type="button"  value="Cos" id="cos" class="button"/>
+	  <input type="button"  value="Tan" id="tan" class="button"/>
+	  <input type="button"  value="Abs" id="abs" class="button"/> <br />
+	  <input type="button"  value="C" id="C" class="button"/>
+
+	  <input type="button"  value="Del" id="del" class="button"/>
+	</div>
+
+      </div>
+    </div>
+  </body>
+</html>

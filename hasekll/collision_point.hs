@@ -1,12 +1,12 @@
-power_func f x n
+powerFunc f x n
   | n == 0 = x
-  | otherwise = power_func f (f x) (n - 1)
+  | otherwise = powerFunc f (f x) (n - 1)
 
-collision_point f x =
-  cp_helper x (f x)
-    where cp_helper slow fast
+collisionPoint f x =
+  cpHelper x (f x)
+    where cpHelper slow fast
             | slow == fast = fast
-            | otherwise = cp_helper f (f slow) (f $ f fast)
+            | otherwise = cpHelper f (f slow) (f $ f fast)
 
 -- Test
 list :: [Int]

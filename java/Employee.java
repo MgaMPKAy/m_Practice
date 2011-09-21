@@ -1,43 +1,54 @@
+import java.util.GregorianCalendar;
+import java.util.Date;
+
 class Employee {
-	private String emplName;
-	private int emplAge;
-	private char emplGender;
-	private double emplBaseSalary;
+	private String name;
+	private double salary;
+	private Date hireDay;
 
-	public Employee(String name, int age, char gender, double baseSalary) {
-		this.emplName = name;
-		this.emplAge = age;
-		this.emplGender = gender;
-		this.emplBaseSalary = baseSalary;
+	Employee(String name, double salary, int year, int month, int dayOfMonth) {
+		this.name = name;
+		this.salary = salary;
+		GregorianCalendar gcal = new GregorianCalendar(year - 1, month - 1, dayOfMonth);
+		this.hireDay = gcal.getTime();
 	}
 
-	public String getName() {
-		return this.emplName;
+	void setName(String name) {
+		this.name = name;
 	}
 
-	public int getAge() {
-		return this.emplAge;
+	void setSalary(double salary) {
+		this.salary = salary;
 	}
 
-	public char getGender() {
-		return this.emplGender;
+	void setHireDay(int year, int month, int dayOfMonth) {
+		GregorianCalendar gcal = new GregorianCalendar(year - 1, month - 1, dayOfMonth);
+		this.hireDay = gcal.getTime();
 	}
 
-	public double getBaseSalary() {
-		return this.emplBaseSalary;
+	String getName() {
+		return this.name;
 	}
 
-	public static void main(String args[]) {
-		Employee emplA = new Employee("A", 20, 'm', 1500);
-		Employee emplB = new Employee("B", 30, 'w', 2000);
+	double getSalary() {
+		return this.salary;
+	}
 
-		System.out.println("Name  : " + emplA.getName());
-		System.out.println("Age   : " + emplA.getAge());
-		System.out.println("Salary: " + emplA.getBaseSalary());
-		System.out.println("Gender: " + emplA.getGender() + "\n");
-		System.out.println("Name  : " + emplB.getName());
-		System.out.println("Age   : " + emplB.getAge());
-		System.out.println("Salary: " + emplB.getBaseSalary());
-		System.out.println("Gender: " + emplB.getGender());
+	Date getHireDay() {
+		return this.hireDay;
+	}
+
+	void raiseSalary(double ratio) {
+		this.salary *= ratio;
+	}
+}
+
+class EmployeeTest {
+	public static void main(String[] args) {
+		Employee[] employees = new Employee[3];
+		employees[0] = new Employee("Mike", 1000, 2011, 1, 2);
+		employees[1] = new Employee("Mike", 1000, 2011, 1, 2);
+		employees[2] = new Employee("Mike", 1000, 2011, 1, 2);
+
 	}
 }
