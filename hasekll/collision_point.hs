@@ -12,5 +12,5 @@ collisionPoint f x =
 list :: [Int]
 list = [1,2,3,4,5,2]
 func n = list !! (n `rem` 5)
-a = collision_point func 1
-b = collision_point func 2
+a = collisionPoint func 1
+b = collisionPoint func 2

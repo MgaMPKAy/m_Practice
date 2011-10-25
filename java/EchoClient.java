@@ -14,7 +14,6 @@ class EchoClient {
 			out	= new PrintWriter(client.getOutputStream(), true);
 			in	= new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-
 			while (true) {
 				String line = sc.next();
 				if (line.equals("BYE")) break;
@@ -23,6 +22,10 @@ class EchoClient {
 				System.out.println(response);
 			}
 
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Please specific an IP address");
+		} catch (ConnectException e) {
+			System.out.println("Can't connect to specificed server");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

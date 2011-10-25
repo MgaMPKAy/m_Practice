@@ -23,7 +23,7 @@ public class EchoServer implements Runnable {
 				System.out.println("accepted");
 				new ClientHandler(client);
 			} catch (Exception e) {
-
+				
 			}
 		}
 	}
@@ -36,14 +36,14 @@ public class EchoServer implements Runnable {
 class ClientHandler implements Runnable {
 	Socket client;
 
-	ClientHandler(Socket _client) {
-		client = _client;
+	ClientHandler(Socket client) {
+		this.client = client;
 		new Thread(this).start();
 	}
 
 	public void run() {
-		PrintWriter out		=null;
-		BufferedReader in	=null;
+		PrintWriter out		= null;
+		BufferedReader in	= null;
 		while (true) {
 			try {
 				out = new PrintWriter(client.getOutputStream(), true);
