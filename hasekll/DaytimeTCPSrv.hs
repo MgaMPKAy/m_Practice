@@ -5,10 +5,13 @@ import Control.Monad
 import System.IO
 import Data.Time
 
+main :: IO ()
 main = withSocketsDo $ do
-    let port = PortNum 8080
-    serverAddr <- return . SockAddrInet port
-               =<< inet_addr "127.0.0.1"
+    addrinfo <- getAddrInfo
+                (Just defaultHints {addrFlags = [AI_PASSIVE]})
+                Nothing
+                (Just "1300")
+    let serverAddr = addrAddress (head addrinfo)
 
     sock <- socket AF_INET Stream defaultProtocol
     bindSocket sock serverAddr
@@ -18,9 +21,9 @@ main = withSocketsDo $ do
 
   where
     acceptLoop sock = do
-           (client, addr) <- accept sock
-           putStrLn $ show addr ++  " connectted"
-           now <- return . show =<< getCurrentTime
-           sendTo client now addr
-           sClose client
-           acceptLoop sock
+        (client, _) <- accept sock
+        handle <- socketToHandle client WriteMode
+        hSetBuffering handle LineBuffering
+        hPutStrLn handle =<< return . show =<< getCurrentTime
+        hClose handle
+        acceptLoop sock
