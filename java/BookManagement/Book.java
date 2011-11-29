@@ -7,9 +7,10 @@ public class Book implements Comparable, Serializable {
 	int id, count;
 	ArrayList<String> borrowers;
 	static int idCount;
-	
+
 	Book() {
 		borrowers = new ArrayList<String>();
+		id = 0;
 	}
 
 	Book(String name, String author, String press, int count) {
@@ -20,7 +21,7 @@ public class Book implements Comparable, Serializable {
 		this.count	= count;
 		this.borrowers	= new ArrayList<String>(count);
 	}
-	
+
 	void setName(String name) {
 		this.name = name;
 	}
@@ -40,12 +41,12 @@ public class Book implements Comparable, Serializable {
 	void setCount(int count) {
 		this.count = count;
 	}
-	
+
 	public int compareTo(Object that) {
-		
+
 		return ((Book)that).id - this.id;
 	}
-	
+
 	Object[] toJTableRow() {
 		Object[] row = {id, name, author, press, count};
 		return row;
