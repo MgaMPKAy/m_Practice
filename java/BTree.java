@@ -71,7 +71,7 @@ public class BTree <T extends Comparable<T>>  implements Cloneable {
 		return answer;
 	}
 
-	/*
+	
 	public void print(int indent) {
 		final int EXTRA_INDENTATION = 4;
 		int i;
@@ -80,14 +80,14 @@ public class BTree <T extends Comparable<T>>  implements Cloneable {
 		for (space = 0; space < indent; space++)
 			System.out.print(" ");
 		for (i = 0; i < dataCount; i++)
-			System.out.print(data[i] + " ");
+			System.out.print(data.get(i) + " ");
 		System.out.println();
 
 		for (i = 0; i < childCount; i++)
 			subset[i].print(indent + EXTRA_INDENTATION);
 
 	}
-	*/
+	
 	
 	private T deleteData(int removeIndex)	{
 		dataCount--;
@@ -118,11 +118,8 @@ public class BTree <T extends Comparable<T>>  implements Cloneable {
 	
 		BTree newNode = new BTree();
 		
-		// System.arraycopy(subset[i].data, (subset[i].dataCount / 2) + 1,
-		// 		 newNode.data, 0, subset[i].dataCount / 2);
-		
 		for (int j = 0; j < subset[i].dataCount / 2; j++) {
-			newNode.data.add(j, subset[i].data.get(j));
+			newNode.data.add(subset[i].data.get(j + subset[i].dataCount / 2 + 1));
 		}
 		System.arraycopy(subset[i].subset, (subset[i].childCount / 2),
 		 		 newNode.subset, 0, subset[i].childCount / 2);
@@ -180,6 +177,7 @@ public class BTree <T extends Comparable<T>>  implements Cloneable {
 	private boolean looseRemove(T target)	{
 	
 		int i = firstGE(target);
+		
 		if (i < dataCount && data.get(i).compareTo(target) != 0  && childCount == 0) {
 			return false;
 		} else if (i < dataCount && data.get(i).compareTo(target) == 0 && childCount == 0) {
