@@ -1,3 +1,4 @@
+import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -18,13 +19,11 @@ public class LibraryUI {
 	public JTextField searchField;
 	public JTable	 resultTable;
 
-	public BTree<Book> library = new BTree<Book>();
-	// ArrayList<Book> library = new ArrayList<Book>();
+	public BTree<Book> library;
 	
-	
-	
-
 	LibraryUI () {
+		setupLibrary();
+		
 		mainFrame = new JFrame("Library");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setPreferredSize(new Dimension(800, 600));
@@ -56,6 +55,12 @@ public class LibraryUI {
 		DefaultTableModel tableModel = new DefaultTableModel(columName, 0);
 		resultTable = new JTable(tableModel);
 		JScrollPane scrollPane = new JScrollPane(resultTable);
+		DefaultTableModel tm = (DefaultTableModel)resultTable.getModel();
+		tm.setRowCount(0);
+		ArrayList<Book> al = library.toArrayList();
+		for (Book book : al) {
+			tm.addRow(book.toJTableRow());
+		}
 		topBox.add(scrollPane);
 		
 		mainFrame.pack();
@@ -66,27 +71,16 @@ public class LibraryUI {
 		LibraryUI libUI = new LibraryUI();
 	}
 
-	void buildEditFrame() {
-		JFrame frame = new JFrame();
-		frame.add(new JLabel("ad"));
-		frame.setPreferredSize(new Dimension(400, 300));
-		frame.pack();
-		frame.toFront();
-		frame.setVisible(true);
-	}
-
-	void buildBorrowFrame() {
 	
+	protected void setupLibrary() {
+		File datafile = new File(BTree.DIR + "btree");
+		if (datafile.exists()) {
+			library = BTree.readFromDisk();
+		} else {
+			library = new BTree<Book>();
+		}
 	}
-
-	void buildAddFrame() {
-		JFrame frame = new JFrame();
-		frame.add(new JLabel("ad"));
-		frame.setPreferredSize(new Dimension(400, 300));
-		frame.pack();
-		frame.toFront();
-		frame.setVisible(true);
-	}
+	
 }
 
 class LibraryToolBarActions {
@@ -98,24 +92,24 @@ class LibraryToolBarActions {
 
 	Action searchAction = new AbstractAction("Add", new ImageIcon("img/refresh.png")) {
 		public void actionPerformed(ActionEvent e) {
-
+			
 			DefaultTableModel tm = (DefaultTableModel)libUI.resultTable.getModel();
 			tm.setRowCount(0);
-
-			String queryString = libUI.searchField.getText();
-			// for (Book book : libUI.library) {
-			// 	if (book.match(queryString)) {
-			// 		tm.addRow(book.toJTableRow());
-			// 	}
-			// }
-			// BTreeNode node = BTreeNode.readFromDisk(rootId);
 			
+			String queryString = libUI.searchField.getText();
+			libUI.setupLibrary();
+			ArrayList<Book> al = libUI.library.toArrayList();
+			for (Book book : al) {
+				if (book.match(queryString)) {
+					tm.addRow(book.toJTableRow());
+				}
+			}
 		}
 	};
 
 	Action borrowAction = new AbstractAction("Borrow", new ImageIcon("img/borrow.png")) {
 		public void actionPerformed(ActionEvent e) {
-			libUI.buildBorrowFrame();
+			// new BorrowFrame();
 		}
 	};
 
@@ -125,7 +119,6 @@ class LibraryToolBarActions {
 			int row = libUI.resultTable.getSelectedRow();
 			Integer idI = (Integer)libUI.resultTable.getValueAt(row, 0);
 			int id = idI.intValue();
-			System.out.println(id);
 			new EditFrame(libUI, id);
 		}
 	};

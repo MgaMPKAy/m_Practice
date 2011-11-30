@@ -3,11 +3,11 @@ import java.util.ArrayList;
 
 public class BTreeNode<T extends Comparable> implements Serializable {
 
-	public static final int HALF_MAX = 200;
+	public static final int HALF_MAX = 2;
 
-	private ArrayList<T> data;
+	public ArrayList<T> data;
 
-	private ArrayList<Integer> children;
+	public ArrayList<Integer> children;
 
 	private int id;
 
@@ -96,7 +96,6 @@ public class BTreeNode<T extends Comparable> implements Serializable {
 	public int getId() {
 		return id;
 	}
-
 
 	public double indexOf(T target) {
 		for (int i = 0; i < data.size(); i++) {
@@ -320,5 +319,33 @@ public class BTreeNode<T extends Comparable> implements Serializable {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	public ArrayList<T> toArrayList() {
+		ArrayList<T> al = new ArrayList<T>();
+		for (T item : data) {
+			al.add(item);
+		}
+		if (!isLeaf()) {
+			for (Integer childId : children) {
+				BTreeNode child = BTreeNode.readFromDisk(childId);
+				ArrayList<T> childAL = child.toArrayList();
+				for (T item : childAL) {
+					al.add(item);
+				}
+			}
+		}
+		return al;
+	}
+	
+	public boolean update(T target) {
+		return true;
+	}
+
+	public T get(T target) {
+		BTreeNode node = this;
+		double d = indexOf(target);
+		int i = (int)d;
+		return (T)data.get(0);
 	}
 }

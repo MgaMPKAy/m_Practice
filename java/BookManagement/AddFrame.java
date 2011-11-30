@@ -23,10 +23,10 @@ class AddFrame {
 		pressFiled.setPreferredSize(new Dimension(200, 30));
 		countFiled.setPreferredSize(new Dimension(200, 30));
 
-		JLabel nameLabel	= new JLabel("Name");
-		JLabel authorLabel	= new JLabel("author");
-		JLabel pressLabel	= new JLabel("Press");
-		JLabel countLabel	= new JLabel("Count");
+		JLabel nameLabel	= new JLabel("书名");
+		JLabel authorLabel	= new JLabel("作者");
+		JLabel pressLabel	= new JLabel("出版社");
+		JLabel countLabel	= new JLabel("馆藏");
 		authorLabel.setPreferredSize(new Dimension(100, 30));
 		nameLabel.setPreferredSize(new Dimension(100, 30));
 		countLabel.setPreferredSize(new Dimension(100, 30));
@@ -60,21 +60,22 @@ class AddFrame {
 		frame.setVisible(true);
 	}
 
-	Action addFrameAction = new AbstractAction("Add", new ImageIcon("img/add.png")) {
+	Action addFrameAction = new AbstractAction("增加", new ImageIcon("img/add.png")) {
 		public void actionPerformed(ActionEvent e) {
 			String name = nameFiled.getText();
 			String author = authorFiled.getText();
 			String press = pressFiled.getText();
 			int count = Integer.parseInt(countFiled.getText());
 			Book newBook = new Book(name, author, press, count);
-			newBook.toFile();
-			libUI.library.add(newBook);
+
+			libUI.library.update(newBook);
+			
 			frame.setVisible(false);
 			frame.dispose();
 		}
 	};
 
-	Action cancelAction =  new AbstractAction("Cancel", new ImageIcon("img/add.png")) {
+	Action cancelAction =  new AbstractAction("取消", new ImageIcon("img/cancel.png")) {
 		public void actionPerformed(ActionEvent e) {
 			frame.setVisible(false);
 			frame.dispose();

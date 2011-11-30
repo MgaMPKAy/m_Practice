@@ -1,13 +1,16 @@
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.io.*;
 
-public class BTree<T extends Comparable> implements Serializable {
+public class BTree<T extends Comparable>
+	implements Serializable {
 
 	public static final String DIR
 		= BTree.class.getProtectionDomain().getCodeSource()
 		.getLocation().getFile() + File.separator;
 
 	private int rootId;
-
+	
 	public BTree() {
 		BTreeNode<T> root = new BTreeNode<T>(true);
 		rootId = root.getId();
@@ -52,21 +55,42 @@ public class BTree<T extends Comparable> implements Serializable {
 		}
 	}
 
+	public void update(T target) {
+		if (contains(target)) {
+			remove(target);
+		}
+		add(target);
+	}
+
+	public T get(T target) {
+		BTreeNode node = BTreeNode.readFromDisk(rootId);
+		while (node != null) {
+			double d = node.indexOf(target);
+			int i = (int)d;
+			if (i == d) {
+				return (T)node.data.get(i);
+			} else {
+				node = node.getChild(i);
+			}
+		}
+		return null;
+	}
+	
 	public static BTree readFromDisk() {
 		try {
 			ObjectInputStream in =
 				new ObjectInputStream(new FileInputStream(DIR + "btree"));
 			return (BTree)(in.readObject());
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
+			// e.printStackTrace();
+			// System.exit(1);
 			return null;
 		}
 	}
 	
 	public void writeToDisk() {
 		try {
-			ObjectOutputStream out	=
+			ObjectOutputStream out =
 				new ObjectOutputStream(new FileOutputStream(DIR + "btree"));
 			out.writeObject(this);
 			out.close();
@@ -76,7 +100,10 @@ public class BTree<T extends Comparable> implements Serializable {
 		}
 	}
 
-	public int getRootId() {
-		return rootId;
+	public ArrayList<T> toArrayList() {
+		BTreeNode<T> root = BTreeNode.readFromDisk(rootId);
+		return root.toArrayList();
 	}
+	
+	public int getRootId() {return rootId;}
 }

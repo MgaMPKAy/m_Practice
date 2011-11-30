@@ -16,7 +16,9 @@ class EditFrame {
 	
 	EditFrame(LibraryUI libUI, int id) {
 		this.libUI = libUI;
-		this.book = Book.fromFile(id);
+		Book originBook = new Book();
+		originBook.setId(id);
+		book = libUI.library.get(originBook);
 			
 		frame.setPreferredSize(new Dimension(400, 240));
 	
@@ -30,10 +32,10 @@ class EditFrame {
 		pressFiled.setText(book.press);
 		countFiled.setText("" + book.count);
 		
-		JLabel nameLabel	= new JLabel("Name");
-		JLabel authorLabel	= new JLabel("Author");
-		JLabel pressLabel	= new JLabel("Press");
-		JLabel countLabel	= new JLabel("Count");
+		JLabel nameLabel	= new JLabel("书名");
+		JLabel authorLabel	= new JLabel("作者");
+		JLabel pressLabel	= new JLabel("出版社");
+		JLabel countLabel	= new JLabel("馆藏");
 		authorLabel.setPreferredSize(new Dimension(100, 30));
 		nameLabel.setPreferredSize(new Dimension(100, 30));
 		countLabel.setPreferredSize(new Dimension(100, 30));
@@ -53,7 +55,7 @@ class EditFrame {
 		cp.add(panel, BorderLayout.CENTER);
 
 		panel = new JPanel(new FlowLayout());
-		JButton addButton = new JButton(addFrameAction);
+		JButton addButton = new JButton(editFrameAction);
 		JButton cancelButton = new JButton(cancelAction);
 		
 		addButton.setPreferredSize(new Dimension(120, 30));
@@ -67,26 +69,34 @@ class EditFrame {
 		frame.setVisible(true);
 	}
 
-	Action addFrameAction = new AbstractAction("Add", new ImageIcon("img/add.png")) {
+	Action editFrameAction = new AbstractAction("Edit", new ImageIcon("img/.png")) {
 		public void actionPerformed(ActionEvent e) {
 			String name = nameFiled.getText();
 			String author = authorFiled.getText();
 			String press = pressFiled.getText();
-			int count = Integer.parseInt(countFiled.getText());
+			int count;
+			try {
+				count = Integer.parseInt(countFiled.getText());
+			} catch (Exception ex) {
+				count = 0;
+			}
 			book.setName(name);
 			book.setAuthor(author);
 			book.setPress(press);
 			book.setCount(count);
-			book.toFile();
+
+			libUI.library.update(book);
+
 			frame.setVisible(false);
 			frame.dispose();
 		}
 	};
-
+	
 	Action cancelAction =  new AbstractAction("Cancel", new ImageIcon("img/cancle.png")) {
 		public void actionPerformed(ActionEvent e) {
 			frame.setVisible(false);
 			frame.dispose();
 		}
 	};
+	
 }

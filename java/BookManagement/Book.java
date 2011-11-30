@@ -14,7 +14,7 @@ public class Book implements Comparable, Serializable {
 	}
 
 	Book(String name, String author, String press, int count) {
-		id		= ++idCount;
+		id		= BookIdGenerator.nextId();
 		this.name	= name;
 		this.author	= author;
 		this.press	= press;
@@ -26,12 +26,12 @@ public class Book implements Comparable, Serializable {
 		this.name = name;
 	}
 
-	void setAuthor(String name) {
+	void setAuthor(String author) {
 		this.author = author;
 	}
 
-	void setPress(String name) {
-		this.name = name;
+	void setPress(String press) {
+		this.press = press;
 	}
 
 	void setId(int id) {
@@ -42,6 +42,13 @@ public class Book implements Comparable, Serializable {
 		this.count = count;
 	}
 
+	void update(String name, String author, String press, int count) {
+		this.name = name;
+		this.author = author;
+		this.press = press;
+		this.count = count;
+	}
+	
 	public int compareTo(Object that) {
 
 		return ((Book)that).id - this.id;
@@ -82,27 +89,7 @@ public class Book implements Comparable, Serializable {
 		return false;
 	}
 
-	static Book fromFile(int id) {
-		try {
-			ObjectInputStream in =
-				new ObjectInputStream(new FileInputStream("book-" + id));
-			return (Book)(in.readObject());
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-			return null;
-		}
-	}
-
-	void toFile() {
-		try {
-			ObjectOutputStream out =
-				new ObjectOutputStream(new FileOutputStream("book-" + id));
-			out.writeObject(this);
-			out.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+	public String toString() {
+		return "Book " + id + ": " + name;
 	}
 }

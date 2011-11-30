@@ -1,8 +1,8 @@
 import java.io.*;
 
-public class IdGenerator {
+class IdGenerator {
 
-	public static final File FILE = new File(BTree.DIR + "id");
+	public static File FILE = new File(BTree.DIR + "id");
 
 	public static int nextId() {
 		try {
@@ -29,4 +29,8 @@ public class IdGenerator {
 	public static void main(String[] args) {
 		System.out.println(nextId());
 	}
+}
+
+class BookIdGenerator extends IdGenerator {
+	public static File FILE = new File(BTree.DIR + "bookId");	
 }
