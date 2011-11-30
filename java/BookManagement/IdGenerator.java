@@ -32,5 +32,5 @@ class IdGenerator {
 }
 
 class BookIdGenerator extends IdGenerator {
-	public static File FILE = new File(BTree.DIR + "bookId");	
+	public static File FILE = new File(BTree.DIR + "bookId");
 }

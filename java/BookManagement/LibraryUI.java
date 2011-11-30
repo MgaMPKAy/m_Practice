@@ -15,15 +15,15 @@ public class LibraryUI {
 	private JPanel searchPanel;
 	private JButton searchButton;
 	private LibraryToolBarActions libActions;
-	
+
 	public JTextField searchField;
 	public JTable	 resultTable;
-
+	public DefaultTableModel tableModel;
 	public BTree<Book> library;
-	
+
 	LibraryUI () {
 		setupLibrary();
-		
+
 		mainFrame = new JFrame("Library");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setPreferredSize(new Dimension(800, 600));
@@ -33,36 +33,35 @@ public class LibraryUI {
 		mainContentPane.add(topBox);
 
 		libActions = new LibraryToolBarActions(this);
-		
-		toolBar = new JToolBar();
-		toolBar.add(libActions.addAction);
-		toolBar.add(libActions.searchAction);
-		toolBar.add(libActions.editAction);
-		toolBar.add(libActions.borrowAction);
-		topBox.add(toolBar);
+
+		JPanel toolBarPanel = new JPanel(new FlowLayout());
+		toolBarPanel.setMaximumSize(new Dimension(800,35));
+		toolBarPanel.add(new JButton(libActions.addAction));
+		toolBarPanel.add(new JButton(libActions.searchAction));
+		toolBarPanel.add(new JButton(libActions.editAction));
+		toolBarPanel.add(new JButton(libActions.borrowAction));
+		toolBarPanel.add(new JButton(libActions.returnAction));
+		toolBarPanel.add(new JButton(libActions.delAction));
+		topBox.add(toolBarPanel);
 
 		searchPanel = new JPanel();
 		searchPanel.setLayout(new BorderLayout());
 		searchPanel.setMaximumSize(new Dimension(800, 35));
 		searchButton = new JButton(libActions.searchAction);
-		searchButton.setText("Search");
 		searchField = new JTextField();
 		searchPanel.add(searchButton, BorderLayout.EAST);
 		searchPanel.add(searchField, BorderLayout.CENTER);
 		topBox.add(searchPanel);
 
-		Object[] columName = {"ID", "Name", "Author", "Press", "Count"}; 
-		DefaultTableModel tableModel = new DefaultTableModel(columName, 0);
+		Object[] columName = {"ID", "书名", "作者", "出版社", "馆藏"};
+		tableModel = new DefaultTableModel(columName, 0);
 		resultTable = new JTable(tableModel);
 		JScrollPane scrollPane = new JScrollPane(resultTable);
-		DefaultTableModel tm = (DefaultTableModel)resultTable.getModel();
-		tm.setRowCount(0);
+		tableModel.setRowCount(0);
 		ArrayList<Book> al = library.toArrayList();
-		for (Book book : al) {
-			tm.addRow(book.toJTableRow());
-		}
+		refresh();
 		topBox.add(scrollPane);
-		
+
 		mainFrame.pack();
 		mainFrame.setVisible(true);
 	}
@@ -71,7 +70,7 @@ public class LibraryUI {
 		LibraryUI libUI = new LibraryUI();
 	}
 
-	
+
 	protected void setupLibrary() {
 		File datafile = new File(BTree.DIR + "btree");
 		if (datafile.exists()) {
@@ -80,7 +79,19 @@ public class LibraryUI {
 			library = new BTree<Book>();
 		}
 	}
-	
+
+ 	public void refresh() {
+		tableModel.setRowCount(0);
+		String queryString = searchField.getText();
+		setupLibrary();
+		ArrayList<Book> al = library.toArrayList();
+		for (Book book : al) {
+			if (book.match(queryString)) {
+				tableModel.addRow(book.toJTableRow());
+			}
+		}
+	}
+
 }
 
 class LibraryToolBarActions {
@@ -90,42 +101,62 @@ class LibraryToolBarActions {
 		this.libUI = libUI;
 	}
 
-	Action searchAction = new AbstractAction("Add", new ImageIcon("img/refresh.png")) {
+	Action searchAction = new AbstractAction("查找", new ImageIcon("img/find.png")) {
 		public void actionPerformed(ActionEvent e) {
-			
-			DefaultTableModel tm = (DefaultTableModel)libUI.resultTable.getModel();
-			tm.setRowCount(0);
-			
-			String queryString = libUI.searchField.getText();
-			libUI.setupLibrary();
-			ArrayList<Book> al = libUI.library.toArrayList();
-			for (Book book : al) {
-				if (book.match(queryString)) {
-					tm.addRow(book.toJTableRow());
-				}
-			}
+			libUI.tableModel.setRowCount(0);
+			libUI.refresh();
 		}
 	};
 
-	Action borrowAction = new AbstractAction("Borrow", new ImageIcon("img/borrow.png")) {
-		public void actionPerformed(ActionEvent e) {
-			// new BorrowFrame();
-		}
-	};
-
-
-	Action editAction = new AbstractAction("Edit", new ImageIcon("img/edit.png")) {
+	Action borrowAction = new AbstractAction("借书", new ImageIcon("img/borrow.png")) {
 		public void actionPerformed(ActionEvent e) {
 			int row = libUI.resultTable.getSelectedRow();
+			if (row < 0) return;
+
 			Integer idI = (Integer)libUI.resultTable.getValueAt(row, 0);
-			int id = idI.intValue();
-			new EditFrame(libUI, id);
+			new BorrowFrame(libUI, idI.intValue());
+			libUI.refresh();
 		}
 	};
 
-	Action addAction = new AbstractAction("Add", new ImageIcon("img/add.png")) {
+	Action returnAction = new AbstractAction("还书", new ImageIcon("img/return.png")) {
+		public void actionPerformed(ActionEvent e) {
+			int row = libUI.resultTable.getSelectedRow();
+			if (row < 0) return;
+
+			Integer idI = (Integer)libUI.resultTable.getValueAt(row, 0);
+			new ReturnFrame(libUI, idI.intValue());
+		}
+	};
+
+
+	Action editAction = new AbstractAction("编辑", new ImageIcon("img/edit.png")) {
+		public void actionPerformed(ActionEvent e) {
+			int row = libUI.resultTable.getSelectedRow();
+			if (row < 0) return;
+
+			Integer idI = (Integer)libUI.resultTable.getValueAt(row, 0);
+			new EditFrame(libUI, idI.intValue());
+		}
+	};
+
+	Action addAction = new AbstractAction("增加", new ImageIcon("img/add.png")) {
 		public void actionPerformed(ActionEvent e) {
 			new AddFrame(libUI);
+		}
+	};
+
+	Action delAction = new AbstractAction("删除", new ImageIcon("img/del.png")) {
+		public void actionPerformed(ActionEvent e) {
+			int row = libUI.resultTable.getSelectedRow();
+			if (row < 0) return;
+
+			Integer idI = (Integer)libUI.resultTable.getValueAt(row, 0);
+			Book delBook = new Book();
+			delBook.setId(idI.intValue());
+			libUI.library.remove(delBook);
+
+			libUI.tableModel.removeRow(row);
 		}
 	};
 

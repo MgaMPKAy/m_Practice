@@ -10,7 +10,7 @@ public class BTree<T extends Comparable>
 		.getLocation().getFile() + File.separator;
 
 	private int rootId;
-	
+
 	public BTree() {
 		BTreeNode<T> root = new BTreeNode<T>(true);
 		rootId = root.getId();
@@ -75,7 +75,7 @@ public class BTree<T extends Comparable>
 		}
 		return null;
 	}
-	
+
 	public static BTree readFromDisk() {
 		try {
 			ObjectInputStream in =
@@ -87,7 +87,7 @@ public class BTree<T extends Comparable>
 			return null;
 		}
 	}
-	
+
 	public void writeToDisk() {
 		try {
 			ObjectOutputStream out =
@@ -104,6 +104,6 @@ public class BTree<T extends Comparable>
 		BTreeNode<T> root = BTreeNode.readFromDisk(rootId);
 		return root.toArrayList();
 	}
-	
+
 	public int getRootId() {return rootId;}
 }

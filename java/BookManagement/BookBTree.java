@@ -12,13 +12,13 @@ public class BookBTree {
 			b = new Book();
 			b.setId(i);
 			System.out.println(bt.contains(b));
-			
+
 		}
 		for (int i = 14; i >= 0; i--) {
 			b = new Book();
 			b.setId(i);
 			bt.remove(b);
-			
+
 		}
 
 		System.out.println("Get test");
@@ -34,6 +34,6 @@ public class BookBTree {
 		}
 
 		Book bget3 = bt.get(bget1);
-		System.out.println(bget3.name);		
+		System.out.println(bget3.name);
 	}
 }

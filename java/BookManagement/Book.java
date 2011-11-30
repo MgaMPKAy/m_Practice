@@ -3,10 +3,10 @@ import java.util.regex.*;
 import java.util.ArrayList;
 
 public class Book implements Comparable, Serializable {
-	String name, author, press;
-	int id, count;
-	ArrayList<String> borrowers;
-	static int idCount;
+	public String name, author, press;
+	public int id, count;
+	public ArrayList<String> borrowers;
+	public static int idCount;
 
 	Book() {
 		borrowers = new ArrayList<String>();
@@ -48,7 +48,7 @@ public class Book implements Comparable, Serializable {
 		this.press = press;
 		this.count = count;
 	}
-	
+
 	public int compareTo(Object that) {
 
 		return ((Book)that).id - this.id;
