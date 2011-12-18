@@ -26,6 +26,7 @@ instance Show App where
                ++ show (unProtocol app)
                ++ show (unAppURL app)
                ++ show (unPrivacy app)
+               ++ " &"
 
 apps:: [App]
 apps = [ App "xiami" "www.xiami.com/song/play?ids=/song/playlist-default" HTTP Public
@@ -38,7 +39,7 @@ apps = [ App "xiami" "www.xiami.com/song/play?ids=/song/playlist-default" HTTP P
        ]
 
 baseCmd :: String
-baseCmd = "/usr/lib/chromium/chromium --user-data-dir=/tmp/chromium "
+baseCmd = "nohup /usr/lib/chromium/chromium --user-data-dir=/tmp/chromium "
 
 appsMap :: M.Map String App
 appsMap = M.fromList $ map appToKV apps
