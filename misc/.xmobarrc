@@ -1,0 +1,21 @@
+Config {-- font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
+        -- font = "xft:Dejavu Sans Mono"
+        font = "xft:WenQuanYi Micro Hei :size=8:antialias=false"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = TopW L 100
+       , lowerOnStart = True
+       , borderColor = "black"
+       , border = NoBorder
+       , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","grey","--high","red"] 30
+                    --, Run Cpu ["-L","15","-H","50","--normal","green","--high","red"] 15
+		    , Run MultiCpu ["-t", "Cpu: <total0>% <total1>%", "--high", "red"] 30
+                    , Run Memory ["-t","Mem: <usedratio>% (<cache>M)", "--high", "red"] 30
+                    , Run Swap [] 45
+                    , Run Date "%a %b %_d %H:%M" "date" 600
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %multicpu% | %memory% %swap% | %eth0% | %date% "
+       }
