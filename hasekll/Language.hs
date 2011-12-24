@@ -2,13 +2,13 @@ module Language where
 
 import Data.List
 
-
 data Expr a = EVar Name
             | ENum Int
             | EConster Int Int
             | EAp (Expr a) (Expr a)
             | ELet IsRec [(a, Expr a)] (Expr a)
             | ECase (Expr a) [Alter a]
+            | Elam [a] (Expr a)
               deriving (Show)
 
 type CoreExpr = Expr Name
@@ -22,6 +22,7 @@ nonrecursive = False
 
 bindersOf :: [(a, b)] -> [a]
 bindersOf defns = [name | (name, _) <- defns]
+
 rhssOf :: [(a, b)] -> [b]
 rhssOf defns    = [rhs | (_, rhs) <- defns]
 
@@ -61,6 +62,7 @@ preludeDefs =
       
 -- pprint :: CoreProgram -> String
 
+pprExpr :: Expr a -> String
 pprExpr (ENum n) = show n
 pprExpr (EVar v) = v
 pprExpr (EAp e1 e2) = pprExpr e1 ++ " " ++ pprAExpr e2
