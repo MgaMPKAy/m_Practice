@@ -5,18 +5,16 @@ import Control.Monad
 import Data.IORef
 
 totalThread :: Int
-totalThread = 3
+totalThread = 5
 
-thread :: Show a => IORef Int -> QSem -> QSem -> QSem -> Int -> a -> IO b
-thread count mutex b1 b2 i n = do
-    threadDelay (i * 100000)
-    myThreadId >>= (\tid -> putStrLn $ show tid ++ "\t" ++ show n)
+thread :: IORef Int -> QSem -> QSem -> QSem -> Int -> Int -> IO b
+thread count mutex b1 b2 time n = do
+    myThreadId >>= (\tid -> putStrLn $ show tid ++ "\t" ++ show n ++ "\tRend")
         
     waitQSem mutex
     modifyIORef count (+1)
     c1 <- readIORef count
     when (c1 == totalThread) $ do
-            writeIORef count 0
             waitQSem b2
             signalQSem b1
     signalQSem mutex
@@ -24,18 +22,20 @@ thread count mutex b1 b2 i n = do
     waitQSem b1
     signalQSem b1
 
+    myThreadId >>= (\tid -> putStrLn $ show tid ++ "\t" ++ show n ++ "\tCritic")
+
     waitQSem mutex
     modifyIORef count (subtract 1)
     c2 <- readIORef count
-    when (c2 == totalThread) $ do
-            writeIORef count 0
+    when (c2 == 0) $ do
             waitQSem b1
+            signalQSem b2
     signalQSem mutex
                
     waitQSem b2
     signalQSem b2
     
-    thread count mutex b1 b2 (i + 1) n
+    thread count mutex b1 b2 time (n + (1::Int))
 
 main :: IO ()
 main = do
@@ -43,5 +43,5 @@ main = do
    mutex <- newQSem 1
    b1 <- newQSem 0
    b2 <- newQSem 1
-   forM_ [1.. totalThread] (\i-> forkIO $ thread count mutex b1 b2 i (0::Int))
-   threadDelay (1000 * 10000)
+   forM_ [1.. totalThread] (\time-> forkIO $ thread count mutex b1 b2 time (0::Int))
+   threadDelay 1000
