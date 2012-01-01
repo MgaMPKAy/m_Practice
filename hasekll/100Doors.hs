@@ -8,11 +8,11 @@ toggle Closed = Opened
 
 
 toggleEvery :: [Door] -> Int -> [Door]
-toggleEvery doors n = snd $ foldl f (1, []) doors
+toggleEvery doors n = reverse $ snd $ foldl f (1, []) doors
   where
     f (i, r) door
-      | i `rem` n == 0 = (i + 1, r ++ [toggle door]) -- bad proformance
-      | otherwise = (i + 1, r ++ [door])
+      | i `rem` n == 0 = (i + 1, toggle door : r)
+      | otherwise = (i + 1, door : r)
 
 
 main :: IO ()
