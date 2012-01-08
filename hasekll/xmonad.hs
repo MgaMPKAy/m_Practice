@@ -7,14 +7,14 @@ import System.IO
 
 myManageHook :: ManageHook
 myManageHook = composeAll
-    [ className =? "Gvbam"     --> doFloat
-    , className =? "FloatWindow"      --> doFloat
+    [ className =? "FW"    --> doFloat
+    , className =? "F"     --> doFloat
     ]
 
 myKeys :: [(String, X ())]
 myKeys = [ ("M-w",                    kill)
          , ("M1-0",                   spawn "urxvtc")
-         , ("M1--",                   spawn "a-ex")
+         , ("M1--",                   spawn "emacsclient -nc $@ -a ''")
          , ("M1-=",                   spawn "chromium --user-data-dir=/tmp/chromium --incognito")
          , ("M1-C-=",                 spawn "chromium --user-data-dir=/tmp/chromium")
          , ("M1-<F9>",                spawn "a-touchpad")
@@ -35,13 +35,15 @@ myXmobar proc = xmobarPP {
 myStartupHook :: X ()
 myStartupHook = spawn "a-touchpad"
 
+myWorkspaces = ["1:read", "2:write", "3:console", "4", "5"]
+
 main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar"
     xmonad $ defaultConfig
         { manageHook = manageDocks <+> myManageHook
                        <+> manageHook defaultConfig
-        , layoutHook = avoidStruts  $  layoutHook defaultConfig
+        , layoutHook = avoidStruts $ layoutHook defaultConfig
         , logHook = dynamicLogWithPP $ myXmobar xmproc
         , modMask = mod4Mask
         , normalBorderColor = "#dddddd"
@@ -49,6 +51,7 @@ main = do
         , focusFollowsMouse = False
         , terminal = "urxvt"
         , startupHook = myStartupHook
+        , workspaces = myWorkspaces
         } `additionalKeysP` myKeys
 
 {-
