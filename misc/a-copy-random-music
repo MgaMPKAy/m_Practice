@@ -1,0 +1,22 @@
+#!/bin/bash
+
+COUNT=$1
+if [[ -z $1 ]] ; then
+    echo usage: a-copy-random-music [num]
+    exit
+fi
+
+if [ ! -d Music ]; then
+    mkdir Music
+fi
+
+find $KFAT1/Sounds/Music/ -name "*.mp3" -exec echo '"{}"' \; \
+| sort -R --random-source=/dev/urandom \
+| head -$COUNT \
+| xargs --verbose -I file cp file ./Music
+
+ls ./Music/*.mp3 > playlist
+
+if [[ "$2" == "play" ]]; then
+    mplayer -playlist playlist -shuffle
+fi
