@@ -9,7 +9,6 @@
  '(haskell-indent-dont-hang (quote ("(")))
  '(haskell-indent-offset 4)
  '(haskell-indent-thenelse 4)
-;; '(haskell-mode-hook (quote (#[nil "ghc" [ghc-init flymake-mode] 1] turn-on-haskell-indent turn-on-haskell-doc-mode)))
  '(inhibit-startup-screen t)
  '(make-backup-files nil)
  '(yas/prompt-functions (quote (yas/dropdown-prompt yas/x-prompt yas/completing-prompt yas/ido-prompt yas/no-prompt))))
@@ -18,7 +17,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(show-paren-match ((((class color) (background light)) (:background "azure2")))))
+ '(show-paren-match ((((class color) (background dark)) (:foreground "green1")))))
 
 ;; ================================ Basic UI  =================================
 (menu-bar-mode nil)
@@ -63,7 +62,7 @@
 (add-to-list 'exec-path "~/.cabal/bin/")
 (add-to-list 'load-path "~/.emacs.d/extensions/ghc-mod/")
 (autoload 'ghc-init "ghc" nil t)
-(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+(add-hook 'haskell-mode-hook (lambda () (ghc-init)(flymake-mode)))
 
 ;;nxhtml
 (load "/home/adlezz/.emacs.d/extensions/nxhtml/autostart.elc")
@@ -260,3 +259,6 @@
 ;; =========================== Scala =================================
 (add-to-list 'load-path "~/.emacs.d/extensions/scala-mode/")
 (require 'scala-mode-auto)
+
+;; =========================== Flymake ==============================
+;; Nothing now

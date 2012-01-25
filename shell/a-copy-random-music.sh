@@ -24,7 +24,9 @@ elif [ ! -d $TARGET ]; then
 fi
 
 # copy
-if [ $COUNT == "all" ]; then
+if [ $COUNT == 'inplace' ]; then
+    find  $FROM -name "*.mp3" > playlist
+elif [ $COUNT == "all" ]; then
     find $FROM -name "*.mp3" -print0 \
 	| xargs -0 -r --verbose -I file cp file $TARGET
 else
@@ -35,7 +37,9 @@ else
 fi
 
 # build playlist
-ls $TARGET/*.mp3 > playlist
+if [ $COUNT != 'inplace' ]; then
+    ls $TARGET/*.mp3 > playlist
+fi
 
 # optional: start playing immediately
 if [[ "$2" == "play" ]]; then
