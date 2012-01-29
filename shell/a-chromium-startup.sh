@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONFIG_DIR=/tmp
-ARCHIVE_FILE=/home/adlezz/setup/chromium.tar.gz
+ARCHIVE_FILE=$SETUP_DIR/chromium.tar.gz
 
 if [ -d $CONFIG_DIR/chromium ]; then
     echo a-chromium-startuo: Already set up

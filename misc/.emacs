@@ -65,7 +65,7 @@
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)(flymake-mode)))
 
 ;;nxhtml
-(load "/home/adlezz/.emacs.d/extensions/nxhtml/autostart.elc")
+(load "~/.emacs.d/extensions/nxhtml/autostart.elc")
 
 ;; Lua
 ;;(require 'lua-mode)
