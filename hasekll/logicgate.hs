@@ -11,10 +11,10 @@ data LogicGate = ON
                | NOR LogicGate LogicGate
                | XOR LogicGate LogicGate
                | XNOR LogicGate LogicGate
-               deriving (Show)
+                 deriving (Show)
 
 evaluate :: LogicGate -> Bool
-evaluate input = 
+evaluate input =
     case input of
       ON -> True
       OFF -> False
@@ -29,4 +29,3 @@ evaluate input =
 main :: IO ()
 main =
     mapM_ (print . evaluate) [NAND OFF OFF, NAND OFF ON, NAND ON OFF, NAND ON ON]
-  

@@ -10,7 +10,7 @@ data Mutex = Mutex {
 }
 
 newMutex :: IO Mutex
-newMutex = pure Mutex <*> newQSem 1
+newMutex = Mutex <$> newQSem 1
 
 lock :: Mutex -> IO ()
 lock (Mutex m) = waitQSem m
