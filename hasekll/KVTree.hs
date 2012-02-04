@@ -8,20 +8,18 @@ data Tree k v
 data Order = Pre
            | Mid
            | Post
-{--
-instance Show a => Show (Tree a) where
+
+instance (Show k, Show v) => Show (Tree k v) where
     show t = showTree t 0
         where
           showTree t0 level =
               case t0 of
                 Empty -> indent ++ "Empty"
-                Leaf l -> indent ++ "Leaf: " ++ show l
-                Branch n left right ->
-                           indent ++ "Branch:" ++ show n ++ "\n" ++
+                Node k v left right ->
+                           indent ++ "Node" ++ show (k, v) ++ "\n" ++
                            showTree left (level + 1) ++ "\n" ++
                            showTree right (level + 1)
               where indent = replicate (level * 2) ' '
---}
 
 instance Functor (Tree k) where
     fmap = treeMap
@@ -39,9 +37,8 @@ toList (Node _ v l r) ord =
       Mid  -> toList l ord ++ [v] ++ toList r ord
       Post -> toList l ord ++ toList r ord ++ [v]
 
-
 -- | insert a new (k,v) pair  into a tree
-insert :: Ord a => (a, v) -> Tree a v -> Tree a v
+insert :: Ord k => (k, v) -> Tree k v -> Tree k v
 insert (k,v) Empty = Node k v Empty Empty
 insert p@(k,_) n@(Node nk nv l r)
     | k < nk = Node nk nv (insert p l) r

@@ -1,4 +1,4 @@
->?module Tree where
+module Tree where
 
 data Tree a = Empty
             | Leaf a
@@ -56,7 +56,7 @@ findTreeDFS _ Empty             = Empty
 findTreeDFS x (Leaf a)          = if a == x then Leaf a else Empty
 findTreeDFS x t@(Branch a l r)
     | a == x = t
-    | otherwise = if fl /= Empty 
+    | otherwise = if fl /= Empty
                       then fl
                       else findTreeDFS x r
                   where fl = findTreeDFS x l
@@ -95,6 +95,23 @@ reflect (Branch x l r) = Branch x (reflect r) (reflect l)
 balanced :: Tree a -> Bool
 balanced (Branch _ l r) = balanced l && balanced r && (deepth l == deepth r)
 balanced _ = True
+
+labalTree :: Num a => Tree t -> Tree (t, a)
+labalTree tree = fst $ labalTreeIter tree 1
+  where
+    labalTreeIter t s =
+        case t of
+          Empty -> (Empty, s)
+          Leaf x -> (Leaf (x, s), s + 1)
+          Branch n l r -> (Branch (n, s) nl nr, sr)
+            where
+              (nl, sl) = labalTreeIter l (s + 1)
+              (nr, sr) = labalTreeIter r sl
+
+testTree2 :: Tree Char
+testTree2 = Branch 'a'
+            (Branch 'b' (Leaf 'c') (Leaf 'd'))
+            (Branch 'e' (Leaf 'x') (Leaf 'f'))
 
 testTree :: Tree Integer
 testTree = Branch 8 (Branch 4 (Leaf 3) (Leaf 5)) (Branch 9 Empty (Leaf 10))
