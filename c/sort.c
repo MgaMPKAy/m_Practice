@@ -18,8 +18,9 @@ void quicksort(ITEM arr[], int l, int r);
 void insertion(ITEM arr[], int l, int r);
 void shellsort(ITEM arr[], int l, int r);
 
-void merege(ITEM arr[], int l , int mid, int r);
-void meregesort(ITEM arr[], int l ,int r);
+void merge(ITEM arr[], int l , int mid, int r);
+void mergesort(ITEM arr[], int l ,int r);
+void inplace_mergesort(ITEM arr[], int l ,int r);
 
 void output_arr(ITEM arr[], int n);
 ITEM *make_random_arr(int n, int max);
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
 	int n,max,output = 1;
 	time_t start, end;
 	int i;
-	
+
 	if(argc < 3){
 		printf("Enter N MAX:");
 		scanf("%i %i", &n, &max);
@@ -50,30 +51,36 @@ int main(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 		}
 	}
-	
-	srand((unsigned)time(NULL));  
+
+	// srand((unsigned)time(NULL));
+	srand((unsigned)time(NULL));
 	arr1 = make_random_arr(n, max);
 	arr2 = malloc(sizeof(ITEM) * n);
 	for (i = 0; i < n; i++)
-		arr2[i] = arr[i];
-	
+		arr2[i] = arr1[i];
+
 	if(output == 1) output_arr(arr1, n);// should be improved
-	start = clock(); 
-	meregesort(arr, 0, n-1);
+	start = clock();
+	mergesort(arr1, 0, n-1);
 	end = clock();
 	if(output == 1) output_arr(arr1, n);// should be improved
 	printf("Time used: %.2lfms\n",(double)(end-start));
-	
+
 	if(output == 1) output_arr(arr2, n);// should be improved
-	start = clock(); 
-	quicksort(arr2, 0, n-1);
+	start = clock();
+	inplace_mergesort(arr2, 0, n-1);
 	end = clock();
 	if(output == 1) output_arr(arr2, n);// should be improved
 	printf("Time used: %.2lfms\n",(double)(end-start));
-	
-	free_arr(&arr);
+
+	for (i = 0; i < n; i++)
+		if (arr2[i] != arr1[i]) {
+			printf("%s\n", "Error");
+			return 1;
+		}
+
+	free_arr(&arr1);
 	free_arr(&arr2);
-		
 	return 0;
 }
 
@@ -111,7 +118,7 @@ void bubble(ITEM arr[], int l ,int r)
 void quicksort(ITEM *arr, int l, int r)
 {
 	if (l >= r)
-		return; 
+		return;
 	int p = rand()%(r - l + 1) + l;
 	ITEM pr = arr[p];
 	int i = l - 1, j = r + 1;
@@ -121,7 +128,7 @@ void quicksort(ITEM *arr, int l, int r)
 		while((arr[i] < pr)&&(i<=r));
 		do {j--;}
 		while((arr[j] > pr)&&(j>=l));
-		
+
 		if (i < j){
 			t = arr[i];arr[i] = arr[j]; arr[j] = t;
 		}
@@ -138,10 +145,10 @@ void insertion(ITEM arr[], int l, int r)
 	for(i = r; i > l; i--)
 		if (arr[i]< arr[i-1])
 			{t = arr[i-1]; arr[i-1] = arr[i]; arr[i] = t;}
-  
+
 	for(i = l + 2; i <= r; i++){
 		t = arr[i];
-		j = i - 1;      
+		j = i - 1;
 		while (j >= 1 && arr[j] > t) {
 			arr[j+1] = arr[j];
 			j--;
@@ -152,7 +159,7 @@ void insertion(ITEM arr[], int l, int r)
 
 void shellsort(ITEM *arr ,int l, int r)
 {
-	
+
 	int step[] = {29524 ,9841 ,3280, 1093 ,364, 121, 40, 13, 4, 1};
 	int i, j, k;
 	ITEM min, s;
@@ -170,25 +177,25 @@ void shellsort(ITEM *arr ,int l, int r)
 	}
 }
 
-void merege(ITEM *arr, int start , int mid, int end)
+void merge(ITEM *arr, int start , int mid, int end)
 {
 	int n1 = mid - start + 1;
 	int n2 = end - mid;
 	int i, j, k;
 	/* int left[n1], right[n2];  c99-only? */
-	
+
 	ITEM *left = malloc(sizeof(ITEM) * n1);
 	ITEM *right = malloc(sizeof(ITEM) * n2);
 	if (left == NULL && right == NULL)
 		exit(EXIT_SUCCESS);
-	
+
 	for (i = 0; i < n1; i++)
 		left[i] = arr[start+i];
 	for (j = 0; j < n2; j++)
 		right[j] = arr[mid + 1 + j];
 	i = j = 0;
 	k = start;
-	
+
 	while(i < n1 && j < n2)
 		if (left[i] < right[j])
 			arr[k++] = left[i++];
@@ -202,16 +209,56 @@ void merege(ITEM *arr, int start , int mid, int end)
 	free(right);
 }
 
-void meregesort(int *arr, int l, int r)
+
+void mergesort(int *arr, int l, int r)
 {
 	int mid;
 	if (l < r){
 		mid = (l + r) / 2;
-		meregesort(arr, l, mid);
-		meregesort(arr, mid + 1, r);
-		merege(arr, l, mid, r);
+		mergesort(arr, l, mid);
+		mergesort(arr, mid + 1, r);
+		merge(arr, l, mid, r);
 	}
 }
+
+void inplace_merge(int *arr, int left, int mid, int right)
+{
+	while (1) {
+		if (left == mid) {
+			return;
+		} else {
+			if (arr[left] < arr[mid]) {
+				left++;
+			} else if (arr[left] == arr[mid]) {
+				for (int i = mid; i > left ; i--) {
+					arr[i] = arr[i - 1];
+				}
+				left += 2;
+				mid++;
+			} else {
+				int tmp = arr[mid];
+				for (int i = mid; i > left ; i--) {
+					arr[i] = arr[i - 1];
+				}
+				arr[left] = tmp;
+				left += 1;
+				mid++;
+			}
+		}
+	}
+}
+
+void inplace_mergesort(int *arr, int l, int r)
+{
+	int mid;
+	if (l < r){
+		mid = (l + r) / 2;
+		mergesort(arr, l, mid);
+		mergesort(arr, mid + 1, r);
+		inplace_merge(arr, l, mid + 1, r);
+	}
+}
+
 void output_arr(ITEM arr[], int n)
 {
 	int i;

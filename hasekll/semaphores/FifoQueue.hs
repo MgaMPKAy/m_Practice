@@ -37,19 +37,19 @@ thread :: Fifo -> IO ()
 thread fifoq = do
     myThreadId >>= waitFifoWithName fifoq . show
     myThreadId >>= (\tid -> putStrLn $ show tid ++ "\tok")
-    
+
 total :: Int
 total = 6
 
 main :: IO ()
 main = do
     fifo <- newFifo
-    let act =  concat [[a,b] | a <- (replicate total $ thread fifo) 
+    let act =  concat [[a,b] | a <- (replicate total $ thread fifo)
                              | b <- (replicate total $ yield >> thread fifo)]
     mapM_ forkIO act
     replicateM_ (total * 2) $ getChar >> signalFifo fifo
     getChar >> return ()
-   
+
 
 waitFifoWithName :: Fifo -> String -> IO ()
 waitFifoWithName fifo name = do
