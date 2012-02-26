@@ -26,6 +26,7 @@ void InsertOrderList(SqList *L, ElemType x)
 		elems[i] = elems[i - 1];
 	}
 	elems[m] = x;
+	L->length++;
 }
 
 
