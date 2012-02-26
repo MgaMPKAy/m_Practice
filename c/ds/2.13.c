@@ -11,13 +11,12 @@ typedef struct {
 
 ElemType *Locate(SqList *L, ElemType x)
 {
-	int len = L->length;
-	ElemType *elems = L->elem;
-	int i = 0;
-	for (i = 0; i < len; i++) {
-		if (elems[i] == x) {
-			return elems + i;
-		}
-	}
+	LNode *iter = L;
+    	while(iter) {
+        	if (iter->data == x) {
+            		return iter;
+        	}
+        	iter = iter->next;
+    	}
 	return NULL;
 }
