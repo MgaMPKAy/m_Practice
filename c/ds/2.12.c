@@ -12,23 +12,25 @@ typedef struct {
 char Compare(SqList A, SqList B)
 {
 	int lenA = A.length;
-	int lenB = B.length;
-	int i;
-
-	if (lenA < lenB) {
-		return '<';
-	} else if (lenA > lenB) {
-		return '>';
-	} else {
-		for (i = 0; i < lenA; i++) {
-			if (A.elem[i] == B.elem[i]) {
-				continue;
-			} else if (A.elem[i] < B.elem[i]) {
-				return '<';
-			} else {
-				return '>';
-			}
-		}
-	}
-	return '=';
+    	int lenB = B.length;
+    	int minLen = lenA < lenB ? lenA : lenB;
+    	int i;
+    
+    	for (i = 0; i < minLen; i++) {
+        	if (A.elem[i] == B.elem[i]) {
+                	continue;
+        	} else if (A.elem[i] < B.elem[i]) {
+                	return '<';
+        	} else {
+                return '>';
+        	}        
+    	}
+    	
+    	if (lenA < lenB) {
+        	return '<';
+    	} else if (lenA > lenB) {
+        	return '>';
+    	} else {   
+        	return '=';
+    	}    
 }
