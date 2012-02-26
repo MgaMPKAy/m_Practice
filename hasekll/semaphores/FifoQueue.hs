@@ -3,8 +3,10 @@
 module Main where
 
 import Control.Concurrent
+import Control.Applicative
 import Control.Monad
 import Data.IORef
+import Data.List
 
 data Fifo = Fifo {
       unMutex :: QSem
@@ -28,10 +30,7 @@ signalFifo fifo = do
     signalQSem (unMutex fifo)
 
 newFifo :: IO Fifo
-newFifo = do
-    mutex <- newQSem 1
-    queue <- newIORef []
-    return $ Fifo mutex queue
+newFifo =  Fifo <$> newQSem 1 <*> newIORef []
 
 thread :: Fifo -> IO ()
 thread fifoq = do
@@ -46,6 +45,7 @@ main = do
     fifo <- newFifo
     let act =  concat [[a,b] | a <- (replicate total $ thread fifo)
                              | b <- (replicate total $ yield >> thread fifo)]
+    -- let actx = intercalate [(yield >> thread fifo)] (replicate total $ [thread fifo])
     mapM_ forkIO act
     replicateM_ (total * 2) $ getChar >> signalFifo fifo
     getChar >> return ()
