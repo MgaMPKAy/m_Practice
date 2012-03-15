@@ -31,8 +31,9 @@ cd php-5.4.0
 make && make install
 
 cd /tmp/workspace
-wget http://nginx.org/download/nginx-1.0.11.tar.gz
-cd nginx-1.0.11
+wget http://nginx.org/download/nginx-1.0.13.tar.gz
+tar xf nginx-1.0.13.tar.gz
+cd nginx-1.0.13
 ./configure \
 --prefix=$PREFIX \
 --sbin-path=$PREFIX/bin/nginx \
