@@ -3,9 +3,9 @@
 PREFIX=/tmp/tmproot
 
 cd /tmp/workspace
-wget http://www.php.net/distributions/php-5.3.8.tar.bz2
-tar xf php-5.3.8.tar.bz2
-cd php-5.3.8
+wget http://www.php.net/distributions/php-5.4.0.tar.bz2
+tar xf php-5.4.0.tar.bz2
+cd php-5.4.0
 ./configure \
 --prefix=$PREFIX \
 --sbindir=$PREFIX/bin \
@@ -27,9 +27,7 @@ cd php-5.3.8
 --enable-sysvmsg \
 --enable-sysvsem \
 --enable-sysvshm \
---with-pear \
---without-sqlite3 \
---without-pdo-sqlite
+--with-pear
 make && make install
 
 cd /tmp/workspace
