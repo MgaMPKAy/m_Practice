@@ -1,5 +1,6 @@
-double power_3(int x, int n, double r)
+double power_3(int x, int n)
 {
+	double r = 1;
 	for (;;) {
 		if (n == 0) return r;
 		if (n == 1) return r * x;
@@ -50,8 +51,8 @@ int main(int argc, char *argv[])
 	printf("%f\n", power_2(4, 10, 1));
 	printf("%f\n", power_2(4, 11, 1));
 
-	printf("%f\n", power_3(4, 10, 1));
-	printf("%f\n", power_3(4, 11, 1));
+	printf("%f\n", power_3(4, 10);
+	printf("%f\n", power_3(4, 11));
 
 	return 0;
 }

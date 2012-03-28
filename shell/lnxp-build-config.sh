@@ -3,9 +3,9 @@
 PREFIX=/tmp/tmproot
 
 cd /tmp/workspace
-wget http://www.php.net/distributions/php-5.3.8.tar.bz2
-tar xf php-5.3.8.tar.bz2
-cd php-5.3.8
+wget http://www.php.net/distributions/php-5.4.0.tar.bz2
+tar xf php-5.4.0.tar.bz2
+cd php-5.4.0
 ./configure \
 --prefix=$PREFIX \
 --sbindir=$PREFIX/bin \
@@ -27,14 +27,13 @@ cd php-5.3.8
 --enable-sysvmsg \
 --enable-sysvsem \
 --enable-sysvshm \
---with-pear \
---without-sqlite3 \
---without-pdo-sqlite
+--with-pear
 make && make install
 
 cd /tmp/workspace
-wget http://nginx.org/download/nginx-1.0.11.tar.gz
-cd nginx-1.0.11
+wget http://nginx.org/download/nginx-1.0.13.tar.gz
+tar xf nginx-1.0.13.tar.gz
+cd nginx-1.0.13
 ./configure \
 --prefix=$PREFIX \
 --sbin-path=$PREFIX/bin/nginx \
