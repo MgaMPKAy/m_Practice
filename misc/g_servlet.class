@@ -1,0 +1,5 @@
+#name : servlet class
+# --
+public class $1 extends HttpServlet {
+       $0
+}

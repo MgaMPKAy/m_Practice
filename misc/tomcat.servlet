@@ -1,0 +1,11 @@
+#name : tomcat servlet
+# --
+<servlet>
+  <servlet-name>$1</servlet-name>
+  <servlet-class>$2</servlet-class>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>$1</servlet-name>
+  <url-pattern>$3</url-pattern>
+</servlet-mapping>
