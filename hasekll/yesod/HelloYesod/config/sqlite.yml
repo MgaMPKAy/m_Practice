@@ -1,0 +1,20 @@
+Default: &defaults
+  database: HelloYesod.sqlite3
+  poolsize: 10
+
+Development:
+  <<: *defaults
+
+Test:
+  database: HelloYesod_test.sqlite3
+  <<: *defaults
+
+Staging:
+  database: HelloYesod_staging.sqlite3
+  poolsize: 100
+  <<: *defaults
+
+Production:
+  database: HelloYesod_production.sqlite3
+  poolsize: 100
+  <<: *defaults
