@@ -1,0 +1,5 @@
+$(document).ready(function(){
+    $("##{buID}").click(function(){
+	console.log("Don't click me, please")
+    });
+});
