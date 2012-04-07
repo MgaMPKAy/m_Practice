@@ -1,0 +1,5 @@
+<header>Is this JSON?
+<div #container>
+  <form ##{formId} method=post action=@{JsonR}>
+    ^{widget}
+    <p><input type=submit>

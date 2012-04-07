@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings, MultiParamTypeClasses #-}
 
 import Yesod
+import Text.Lucius
 import Control.Applicative ((<$>), (<*>))
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
@@ -21,23 +22,12 @@ instance Yesod JsonForm
 instance RenderMessage JsonForm FormMessage where
     renderMessage _ _ = defaultFormMessage
 
-getJsonR = defaultLayout [whamlet|
-<form method=post action=@{JsonR}>
-  <p>Json
-  <input type=text name=json>
-  <p><input type=submit>
-|]
+data ValidJson = ValidJson {unJson :: Text} deriving (Show)
 
--- data JsonInput = JsonInput Text deriving (Show)
-
-postJsonR :: Handler RepHtml
-postJsonR = do
-    Textarea jsonInput  <- runInputPost $ id <$> ireq jsonField "json"
-    defaultLayout [whamlet| #{jsonInput} |]
+jsonForm :: Html -> MForm JsonForm JsonForm (FormResult ValidJson, Widget)
+jsonForm =
+    renderDivs $ (ValidJson . unTextarea) <$> areq jsonField "json" Nothing
   where
-    form :: FormInput s JsonForm Textarea
-    form = id <$> ireq textareaField "json"
-
     errorMessage :: Text
     errorMessage = "Not valid json"
 
@@ -47,5 +37,25 @@ postJsonR = do
     validateJson = isJust . maybeResult . flip feed empty
                    . (parse $ json' >> endOfInput) . encodeUtf8 . unTextarea
 
+getJsonR = do
+    ((_, widget), enctype)<- generateFormPost jsonForm
+    defaultLayout $ do
+        formId <- lift newIdent
+        toWidget $(luciusFileReload "jsonForm.lucius")
+        toWidget $(whamletFile "jsonForm.hamlet")
+
+postJsonR :: Handler RepHtml
+postJsonR = do
+    ((result, widget), enctype)  <- runFormPost jsonForm
+    case result of
+      FormSuccess jsonInput ->
+          defaultLayout $ do
+               formId <- lift newIdent
+               $(whamletFile "showJson.hamlet")
+               toWidget $(luciusFileReload "showJson.lucius")
+      _ -> defaultLayout $ do
+               formId <- lift newIdent
+               toWidget $(whamletFile "jsonForm.hamlet")
+               toWidget $(luciusFileReload "jsonForm.lucius")
 
 main = warpDebug 3000 JsonForm
