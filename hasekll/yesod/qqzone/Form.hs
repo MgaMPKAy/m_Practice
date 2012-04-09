@@ -38,7 +38,7 @@ jsonForm =
                    . (parse $ json' >> endOfInput) . encodeUtf8 . unTextarea
 
 getJsonR = do
-    ((_, widget), enctype)<- generateFormPost jsonForm
+    (widget, enctype)<- generateFormPost jsonForm
     defaultLayout $ do
         formId <- lift newIdent
         toWidget $(luciusFileReload "jsonForm.lucius")
