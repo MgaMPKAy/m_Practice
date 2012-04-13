@@ -1,0 +1,18 @@
+#{tokenHtml}
+<div ##{formInputId}>
+  <div ##{fvId jsonView}>
+    <label>Json:
+    ^{fvInput jsonView}
+  $maybe error <- fvErrors jsonView
+    <div .error>
+      #{error}
+
+  <div ##{fvId authorView}>
+    <label>Author:
+    ^{fvInput authorView}
+
+  <div ##{fvId descView}>
+    <label>Description:
+    ^{fvInput descView}
+
+  <input ##{submitId} type=submit value=submit>

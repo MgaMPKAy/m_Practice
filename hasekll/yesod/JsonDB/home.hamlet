@@ -1,0 +1,4 @@
+<p> Is this JSON?
+<div ##{formId}>
+  <form method=post action=@{JsonR} enctype=#{enctype}>
+    ^{jsonFormWidget}

@@ -1,0 +1,10 @@
+body {
+    background: whiteSmoke;
+    text-align: center;
+}
+
+##{formId} {
+    margin: 0 auto;
+    width: 970px;
+    text-align: left;
+}

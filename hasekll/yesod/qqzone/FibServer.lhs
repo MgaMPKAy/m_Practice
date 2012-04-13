@@ -14,8 +14,8 @@
 > getFibR :: Int -> Handler RepHtml
 > getFibR n = defaultLayout [whamlet|
 > <p> fib #{n} = #{fib n}
-> <a href=@{FibR ((+) n 1)}> Next
-> <a href=@{FibR ((-) n 1)}> Next
+> <a href=@{FibR (succ 1)}> Next
+> <a href=@{FibR (pred 1)}> Next
 > |]
 
 > getConstantFibR :: Handler RepHtml
