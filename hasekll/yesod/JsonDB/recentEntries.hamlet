@@ -1,0 +1,8 @@
+Recent:
+<ul>
+$forall Entity key entry <- entries
+  <li .recententry>
+    <div .line>
+      <a href=@{ShowJsonR key}> Detail
+    <pre> #{T.unlines $ take 3 $ T.lines $ jsonEntryText entry}
+

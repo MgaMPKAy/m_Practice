@@ -1,1 +1,16 @@
-<p> Hello
+<p> JSON
+<div .json>
+  <div #json>
+    <pre> #{jsonEntryText jsonEntry}
+
+  $maybe mauthor <- jsonEntryAuthor jsonEntry
+    <div #author>
+      Author: #{mauthor}
+
+  $maybe mdesc <- jsonEntryDescription jsonEntry
+    <div #description>
+      Description: #{mdesc}
+
+  <div #addtime>
+    AddTime: #{show $ jsonEntryAddTime jsonEntry}
+<a href=@{HomeR}>Home Page

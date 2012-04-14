@@ -5,11 +5,12 @@
 import Yesod
 import Yesod.Form
 import Text.Lucius (luciusFileReload)
+import Text.Julius (juliusFileReload)
 import Database.Persist
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import Data.Time
-import Control.Applicative ((<$>), (<*>), pure)
+import Control.Applicative ((<$>), (<*>),(<|>), pure)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
@@ -17,6 +18,8 @@ import Data.Maybe (isJust)
 import Data.Aeson (FromJSON, decode, json')
 import Data.Attoparsec (IResult(..), parse, maybeResult, endOfInput, feed)
 import Data.ByteString (empty)
+import Text.Pandoc
+import Text.JSON.Generic
 
 data JsonDB = JsonDB ConnectionPool
 
@@ -28,9 +31,10 @@ JsonEntry
   description Text Maybe
 |]
 
+
 mkYesod "JsonDB" [parseRoutes|
 / HomeR GET
-/json JsonR POST
+/json JsonR GET POST
 /json/#JsonEntryId ShowJsonR GET
 |]
 instance Yesod JsonDB
@@ -48,11 +52,12 @@ main = withSqlitePool "test.db" 10 $ \pool-> do
     runSqlPool (runMigration migrateAll) pool
     warpDebug 8080 (JsonDB pool)
 
-getHomeR :: Handler RepHtml
-getHomeR = getJsonR
-
 getJsonR :: Handler RepHtml
-getJsonR = do
+getJsonR =
+    defaultLayout [whamlet| ^{recentEntries} |]
+
+getHomeR :: Handler RepHtml
+getHomeR = do
     (jsonFormWidget, enctype) <- generateFormPost jsonForm
     formId <- newIdent
     defaultLayout $ do
@@ -73,6 +78,7 @@ postJsonR = do
           defaultLayout $ do
           $(whamletFile "home.hamlet")
           toWidget $(luciusFileReload "home.lucius")
+
   where
     populateAtuthorSession mauthor =
         case mauthor of
@@ -112,3 +118,29 @@ jsonForm tokenHtml = do
             $(whamletFile "jsonForm.hamlet")
             toWidget $(luciusFileReload "jsonForm.lucius")
     return (jsonInputRes, widget)
+
+
+recentEntries :: Widget
+recentEntries = do
+    mpage <- lift $ runInputGet $ id <$> iopt intField "page"
+    let pageNumber = case mpage of
+                       Just x -> x
+                       Nothing -> 1
+        entrisPerPage = 10
+        dbQuery = selectList []
+                  [ Desc JsonEntryAddTime
+                  , LimitTo entrisPerPage
+                  , OffsetBy $ (pageNumber - 1) * entrisPerPage
+                  ]
+    entries <- lift $ runDB $ dbQuery
+    $(whamletFile "recentEntries.hamlet")
+    toWidget $(luciusFileReload "recentEntries.lucius")
+    toWidget $(juliusFileReload "recentEntries.julius")
+
+{--
+myWriterOptions = defaultWriterOptions {writerHtml5 = True}
+
+jsonToHtml :: Text -> Html
+jsonToHtml = writeHtml
+    myWriterOptions . (\_ -> decodeJSON) defaultParserState . T.unpack
+--}
