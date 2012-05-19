@@ -3,6 +3,7 @@ module EvalRPN (evalRPN) where
 import Types
 import Data.Map(insert, lookup)
 import Prelude hiding (lookup)
+import Data.Maybe (fromJust)
 
 evalRPN input env = evalRPN' input ([], env)
 
@@ -25,8 +26,7 @@ evalRPN' (t:ts) (output, env)
     evalMul (o1:o2:os) env = (Const (eval o1 * eval o2) : os, env)
     evalDiv (o1:o2:os) env = (Const (eval o2 / eval o1) : os, env)
     evalNeg (o1:os)    env = (Const ((-1) * eval o1) : os, env)
-    evalAssign (o1:o2:os) env = let name = (\(Var name) -> name) o2
-                                in (os, insert name (eval o1) env)
+    evalAssign (o1:o2:os) env = (o1:os, insert (fromVar o2) (eval o1) env)
 
     eval (Const x)  = x
-    eval (Var name) = (\(Just x) -> x) $ lookup name env
+    eval (Var name) = fromJust $ lookup name env

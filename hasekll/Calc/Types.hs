@@ -5,6 +5,7 @@ module Types
     , Name
     , Precedence
     , isOperator, isConst, isVar
+    , fromConst, fromVar
     , opAdd, opSub, opMul, opDiv, opNeg, opAssign
     )
 where
@@ -19,6 +20,7 @@ data Token = Var Name
              , unAssoc :: Associativity
              }
              deriving (Eq)
+
 instance Show Token where
     show (Var name) = name
     show (Const num) = show num
@@ -39,6 +41,9 @@ isOperator _ = False
 
 isConst (Const _) = True
 isConst _ = False
+
+fromVar (Var x) = x
+fromConst (Const x) = x
 
 opAssign = Operator "=" 0 RightAssoc
 opAdd = Operator "+" 1 LeftAssoc
