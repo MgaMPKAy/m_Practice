@@ -9,6 +9,7 @@ toRPN tokens = reverse $ toRPN' tokens [] []
     toRPN' [] stack output = popAll stack output
     toRPN' toekns@(t:ts) stack output =
         case t of
+          Var _          -> toRPN' ts stack (t : output)
           Const _        -> toRPN' ts stack (t : output)
           LeftParen      -> toRPN' ts (t : stack) output
           RightParen     -> let (stack', output')

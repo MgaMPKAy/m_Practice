@@ -14,6 +14,10 @@ tokenize' (x:xs) varAcc tokens
                                  then tokenize' xs varAcc tokens
                                  else tokenize' xs [] (varible :  tokens)
     | x `elem` nums        = tokenize' xs (x : varAcc) tokens
+    | x `elem` alphabet    = let (var, input) = getVarible (x:xs)
+                             in if null varAcc
+                                then tokenize' input [] (var : tokens)
+                                else tokenize' input [] (var : varible : tokens)
     | x == '-' && isNeg    = addTokenLoop opNeg
     | x == '('             = addTokenLoop LeftParen
     | x == ')'             = addTokenLoop RightParen
@@ -21,6 +25,7 @@ tokenize' (x:xs) varAcc tokens
     | x == '-'             = addTokenLoop opSub
     | x == '*'             = addTokenLoop opMul
     | x == '/'             = addTokenLoop opDiv
+    | x == '='             = addTokenLoop opAssign
     | otherwise            = error "illegal input"
   where
     addTokenLoop token
@@ -33,5 +38,18 @@ tokenize' (x:xs) varAcc tokens
             || ((not (null tokens) && null varAcc)
                 && (isOperator (head tokens) || head tokens == LeftParen))
 
+
+
 whitespaces = ['\n', '\t', '\r', ' ']
 nums = ['0'..'9']
+alphabet = ['A'..'Z'] ++ ['a'..'z']
+
+getVarible input =
+    let var = Var $ takeWhile (`elem` alphabet) input
+        input' = dropWhile (`elem` alphabet) input
+    in (var, input')
+
+getNumber input =
+    let var = Const $ read $ takeWhile (`elem` alphabet) input
+        input' = dropWhile (`elem` alphabet) input
+    in (var, input')
