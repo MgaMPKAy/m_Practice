@@ -37,8 +37,14 @@ toRPN tokens = reverse $ toRPN' tokens [] []
         | otherwise                   = (stack, output)
       where
         shouldPop
+            -- if current operator(op) is unary, don't pop stack
             | unAssoc op == None = False
+            -- if top of stack is unary
+            -- pop only if op's precedence < top's (TODO: < or <=)
             | unAssoc top == None && assocCompare == LT = True
+            -- neighter top or currnt operator is unary
+            -- pop if top is left  assoc and op's precedence <= top's
+            -- or     top is right assoc and op's precedence == top's
             | otherwise =
                 or [ unAssoc top == LeftAssoc  && assocCompare /= GT
                    , unAssoc top == RightAssoc && assocCompare == LT
