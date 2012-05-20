@@ -31,7 +31,7 @@ instance Show Token where
 type Name = String
 type Precedence = Int
 
-data Associativity = LeftAssoc | RightAssoc deriving (Show, Eq)
+data Associativity = None | LeftAssoc | RightAssoc deriving (Show, Eq)
 
 isVar (Var _) = True
 isVar _ = False
@@ -48,7 +48,7 @@ fromConst (Const x) = x
 opAssign = Operator "=" 0 RightAssoc
 opAdd = Operator "+" 1 LeftAssoc
 opSub = Operator "-" 1 LeftAssoc
-opMul = Operator "*" 2 LeftAssoc
-opDiv = Operator "/" 2 LeftAssoc
-opNeg = Operator "-" 3 LeftAssoc
+opNeg = Operator "-" 2 None
+opMul = Operator "*" 3 LeftAssoc
+opDiv = Operator "/" 3 LeftAssoc
 opPow = Operator "^" 4 RightAssoc

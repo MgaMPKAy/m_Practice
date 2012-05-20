@@ -35,7 +35,12 @@ toRPN tokens = reverse $ toRPN' tokens [] []
     popOperator op stack@(top:xs) output
         | isOperator top && shouldPop = popOperator op xs (top : output)
         | otherwise                   = (stack, output)
-      where shouldPop = or [ unAssoc top == LeftAssoc  && assocCompare /= GT
-                           , unAssoc top == RightAssoc && assocCompare == LT
-                           ]
-            assocCompare = comparing unPred op top
+      where
+        shouldPop
+            | unAssoc op == None = False
+            | unAssoc top == None && assocCompare == LT = True
+            | otherwise =
+                or [ unAssoc top == LeftAssoc  && assocCompare /= GT
+                   , unAssoc top == RightAssoc && assocCompare == LT
+                   ]
+        assocCompare = comparing unPred op top
