@@ -8,7 +8,7 @@ tokenize input = reverse $ tokenize' input []
 tokenize' [] tokens = tokens
 tokenize' (x:xs) tokens
     | x `elem` whitespaces = tokenize' xs tokens
-    | x `elem` digits        = let (tokConst, input) = getConst (x:xs)
+    | x `elem` digits      = let (tokConst, input) = getConst (x:xs)
                              in tokenize' input (tokConst : tokens)
     | x `elem` alphabet    = let (tokVar, input) = getVar (x:xs)
                              in tokenize' input (tokVar : tokens)
@@ -29,7 +29,7 @@ tokenize' (x:xs) tokens
             || (isOperator (head tokens) || head tokens == LeftParen)
 
 whitespaces = ['\n', '\t', '\r', ' ']
-digits = ['0'..'9']
+digits = ['0'..'9'] ++ "e."
 alphabet = ['A'..'Z'] ++ ['a'..'z']
 
 getVar input =
