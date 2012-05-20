@@ -29,7 +29,7 @@ tokenize' (x:xs) tokens
             || (isOperator (head tokens) || head tokens == LeftParen)
 
 whitespaces = ['\n', '\t', '\r', ' ']
-digits = ['0'..'9'] ++ "e."
+digits = ['0'..'9']
 alphabet = ['A'..'Z'] ++ ['a'..'z']
 
 getVar input =
@@ -38,6 +38,6 @@ getVar input =
     in (tokVar, input')
 
 getConst input =
-    let tokConst = Const $ read $ takeWhile (`elem` digits) input
-        input' = dropWhile (`elem` digits) input
+    let tokConst = Const $ read $ takeWhile (`elem` (digits ++ "e.")) input
+        input' = dropWhile (`elem` (digits ++ "e.")) input
     in (tokConst, input')
