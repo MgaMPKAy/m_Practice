@@ -6,7 +6,7 @@ module Types
     , Precedence
     , isOperator, isConst, isVar
     , fromConst, fromVar
-    , opAdd, opSub, opMul, opDiv, opNeg, opAssign
+    , opAdd, opSub, opMul, opDiv, opNeg, opAssign, opPow
     )
 where
 
@@ -26,7 +26,7 @@ instance Show Token where
     show (Const num) = show num
     show LeftParen   = "("
     show RightParen  = ")"
-    show (Operator name _ _) = name
+    show (Operator name pre _) = name ++ ":" ++ show pre
 
 type Name = String
 type Precedence = Int
@@ -51,3 +51,4 @@ opSub = Operator "-" 1 LeftAssoc
 opMul = Operator "*" 2 LeftAssoc
 opDiv = Operator "/" 2 LeftAssoc
 opNeg = Operator "-" 3 LeftAssoc
+opPow = Operator "^" 4 RightAssoc

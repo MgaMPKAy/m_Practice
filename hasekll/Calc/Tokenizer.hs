@@ -20,6 +20,7 @@ tokenize' (x:xs) tokens
     | x == '*'             = addTokenLoop opMul
     | x == '/'             = addTokenLoop opDiv
     | x == '='             = addTokenLoop opAssign
+    | x == '^'             = addTokenLoop opPow
     | otherwise            = error "illegal input"
   where
     addTokenLoop token = tokenize' xs (token : tokens)
