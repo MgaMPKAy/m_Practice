@@ -52,19 +52,18 @@ type Result = String
 
 interpStm :: Stm -> (Env, Result) -> (Env, Result)
 interpStm (CompoundStm stm1 stm2) (env, result) =
-    interpStm stm2 (interpStm stm1 (env, result))
+    interpStm stm2 $ interpStm stm1 (env, result)
 interpStm (AssignStm varName exp) (env, result) =
     let (num, env1, result1) = interpExp exp (env, result)
-    in (insert varName num env1, result)
-interpStm (PrintStm expList ) (env, result) =
+    in (insert varName num env1, result1)
+interpStm (PrintStm expList) (env, result) =
     interpExpList expList (env, result)
 
 interpExp (NumExp num) (env, result) = (num, env, result)
 interpExp (IdExp varName) (env, result) =
     (fromJust $ lookup varName env, env, result)
 interpExp (EseqExp stm exp) (env, result) =
-    let (env1, result1) = interpStm stm (env, result)
-    in interpExp exp (env1, result1)
+    interpExp exp $ interpStm stm (env, result)
 interpExp (OpExp exp1 op exp2) (env, result) =
     let (num1, env1, result1) = interpExp exp1 (env, result)
         (num2, env2, result2) = interpExp exp2 (env1, result1)
@@ -74,7 +73,6 @@ interpExp (OpExp exp1 op exp2) (env, result) =
                 Times -> num1 * num2
                 Div   -> num1 / num2
     in (num, env2, result2)
-
 
 interpExpList (PairExpList exp explist) (env, result) =
     let (num, env1, result1) = interpExp exp (env, result)
