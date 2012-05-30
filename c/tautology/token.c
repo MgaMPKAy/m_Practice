@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include "token.h"
 
 bool is_whitepace(char c)
@@ -20,34 +21,44 @@ bool is_alphabet(char c)
 
 int new_var(char *str, struct token *token, struct symbol_table *sym_table)
 {
-	int var_name_length = 0;
+	int length = 0;
 	char *iter = str;
 	char *new_var_name;
 	int i;
 	token->type = Var;
 
 	while (*str != '\0' && is_alphabet(*(iter++))) {
-		var_name_length++;
+		length++;
 	}
 
-	bool var_in_table = False;
-	for (i = 0; (*(sym_table->name))[i] != NULL; i++) {
-		if (strncmp((*(sym_table->name))[i], str, var_name_length) == 0) {
-			var_in_table = True;
+	bool in_table = False;
+	for (i = 0; i < sym_table->count; i++) {
+		if (strncmp((*(sym_table->name))[i], str, length) == 0) {
+			in_table = True;
 			token->u.varID = i;
+			break;
 		}
 	}
 
-	if (!var_in_table) {
+	if (!in_table) {
 		token->u.varID = i;
-		new_var_name = malloc(var_name_length * sizeof(char) + 1);
-		strncpy(new_var_name, str, var_name_length);
-		new_var_name[var_name_length] = '\0';
+		new_var_name = malloc(length * sizeof(char) + 1);
+		strncpy(new_var_name, str, length);
+		new_var_name[length] = '\0';
 		(*(sym_table->name))[i] = new_var_name;
 		sym_table->count++;
 	}
 
-	return var_name_length;
+	return length;
+}
+
+struct symbol_table *new_symbol_table(int count)
+{
+	struct symbol_table *st = malloc(sizeof(struct symbol_table));
+	st->count = 0;
+	st->name  = malloc(count * sizeof(char*));
+	bzero(st->name, count * sizeof(char *));
+	return st;
 }
 
 bool scanner(char *str, struct token *tokens, struct symbol_table *sym_table)

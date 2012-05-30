@@ -10,6 +10,6 @@ void *get_top(struct stack*);
 void *pop(struct stack*);
 void push(struct stack*, void*);
 int is_empty(struct stack*);
-void init_stack(struct stack*, int);
+struct stack *new_stack(int);
 
 #endif /* _STACK_H_ */

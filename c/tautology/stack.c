@@ -1,5 +1,6 @@
 #include "stack.h"
 #include <stdlib.h>
+#include <strings.h>
 
 void *get_top(struct stack *stack)
 {
@@ -8,7 +9,7 @@ void *get_top(struct stack *stack)
 
 void *pop(struct stack *stack)
 {
-	return (*(stack->st))[stack->top--];
+	return (*(stack->st))[(stack->top)--];
 }
 
 void push(struct stack *stack, void *elem)
@@ -21,11 +22,11 @@ int is_empty(struct stack* stack)
 	return stack->top == -1;
 }
 
-void init_stack(struct stack *stack, int count)
+struct stack *new_stack(int count)
 {
-	if (stack == NULL) {
-
-	}
-	stack->top = -1;
-	stack->st  = malloc(count * sizeof(void*));
+	struct stack *st = malloc(sizeof(struct stack));
+	st->top = -1;
+	st->st  = malloc(count * sizeof(void*));
+	bzero(st->st, count * sizeof(void*));
+	return st;
 }

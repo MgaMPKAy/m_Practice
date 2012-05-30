@@ -2,41 +2,49 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include "types.h"
-#include "scanner.h"
+#include "token.h"
+#include "stack.h"
+#include "expression.h"
+#include "eval.h"
 
 int main(int argc, char *argv[])
 {
 
-	int maxTokens = 10;
-
-	// char input[maxTokens * 2];
-	char *input = malloc(100 * sizeof(char));
-	token *tokens = malloc(sizeof(token) * maxTokens);
-	symbol *symbol_table = malloc(sizeof(struct symbol) * maxTokens);
+	int maxTokens = 60;
+	char *input = malloc(maxTokens * sizeof(char));
+	struct token *tokens = malloc(maxTokens * sizeof(token));
+	struct symbol_table *sym_table = new_symbol_table(maxTokens);
+	struct stack *st = new_stack(maxTokens);
+	struct stack  *expr_stack = new_stack(maxTokens);
+	struct expression  *expr = NULL;
 
 	bzero(tokens, sizeof(struct token) * maxTokens);
-	bzero(symbol_table, sizeof(struct symbol) * maxTokens);
 
 	// char *input = malloc(maxTokens * 2 * sizeof(char));
 
 	gets(input);
 	printf("%s\n", input);
 
-	scanner(input, tokens, symbol_table);
+	scanner(input, tokens, sym_table);
 
-	int i;
-	for (i = 0; i < maxTokens && tokens->type != NotToken; tokens++) {
-		printf("type: %d , ", tokens->type);
-		printf("assoc: %d , ", tokens->u.op.assoc);
-		printf("precednece: %d \n", tokens->u.op.precedence);
+	to_rpn(tokens, st, expr_stack);
+
+	expr = build_tree(expr_stack);
+
+	int rval = eval_all(expr, sym_table);
+
+	switch (rval) {
+	case -2:
+		printf("%s\n", "error");
+		break;
+	case -1:
+		printf("%s\n", "Stastifible");
+		break;
+	case 0:
+		printf("%s\n","Always false");
+		break;
+	case 1:
+		printf("%s\n", "Always true");
+		break;
 	}
-
-
-
-	for (i = 0; i < maxTokens && symbol_table[i].name != NULL; i++) {
-		printf("tb: %d %s\n", i, symbol_table[i].name);
-	}
-
-	return 0;
 }

@@ -4,7 +4,7 @@
 #define False 0
 #define True  1
 
-typedef char bool;
+typedef int bool;
 
 typedef enum token_type {
 	NotToken,
@@ -30,4 +30,5 @@ typedef struct symbol_table {
 
 bool scanner(char *, struct token *, struct symbol_table *);
 
+struct symbol_table *new_symbol_table(int);
 #endif /* _TOKEN_H_ */

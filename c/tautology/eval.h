@@ -4,7 +4,7 @@
 #ifndef _EVAL_H_
 #define _EVAL_H_
 
-bool eval_single(struct expression *, int);
-void eval_all(struct expression *);
-void print_truth_table(struct expression *);
+int eval_single(struct expression *, int);
+void print_truth_table(struct expression *, struct symbol_table *);
+int eval_all(struct expression *, struct symbol_table *);
 #endif /* _EVAL_H_ */

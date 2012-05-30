@@ -5,9 +5,9 @@
 #define _EXPRESSION_H_
 
 typedef enum expression_type {
-	OpExp,
 	VarExp,
-	ParenExp
+	ParenExp,
+	OpExp,
 } expression_type;
 
 typedef struct expression {
@@ -25,5 +25,4 @@ typedef struct expression {
 
 expression * build_tree(struct stack *);
 bool to_rpn(struct token *,struct stack *, struct stack *);
-
 #endif
