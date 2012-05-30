@@ -23,9 +23,7 @@ typedef struct expression {
 	} u;
 } expression;
 
-expression * new_var_expression(struct token *token);
-expression * new_paren_expression(struct token *token);
-expression * new_op_expression(struct token *token);
 expression * build_tree(struct stack *);
+bool to_rpn(struct token *,struct stack *, struct stack *);
 
 #endif
