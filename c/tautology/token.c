@@ -18,7 +18,7 @@ bool is_alphabet(char c)
 	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
 
-int new_var(char *str, struct token *token, struct symbol *symbol_table)
+int new_var(char *str, struct token *token, struct symbol_table *sym_table)
 {
 	int var_name_length = 0;
 	char *iter = str;
@@ -31,8 +31,8 @@ int new_var(char *str, struct token *token, struct symbol *symbol_table)
 	}
 
 	bool var_in_table = False;
-	for (i = 0; symbol_table[i].name != NULL; i++) {
-		if (strncmp(symbol_table[i].name, str, var_name_length) == 0) {
+	for (i = 0; (*(sym_table->name))[i] != NULL; i++) {
+		if (strncmp((*(sym_table->name))[i], str, var_name_length) == 0) {
 			var_in_table = True;
 			token->u.varID = i;
 		}
@@ -43,14 +43,14 @@ int new_var(char *str, struct token *token, struct symbol *symbol_table)
 		new_var_name = malloc(var_name_length * sizeof(char) + 1);
 		strncpy(new_var_name, str, var_name_length);
 		new_var_name[var_name_length] = '\0';
-		symbol_table[i].name = new_var_name;
-		symbol_table.count++;
+		(*(sym_table->name))[i] = new_var_name;
+		sym_table->count++;
 	}
 
 	return var_name_length;
 }
 
-bool scanner(char *str, struct token *tokens, struct symbol *symbol_table)
+bool scanner(char *str, struct token *tokens, struct symbol_table *sym_table)
 {
 	char c = *str;
 
@@ -59,7 +59,7 @@ bool scanner(char *str, struct token *tokens, struct symbol *symbol_table)
 		if (is_whitepace(c)) {
 			str++;
 		} else if (is_alphabet(c)) {
-			int x = new_var(str, tokens, symbol_table);
+			int x = new_var(str, tokens, sym_table);
 			str += x;
 			tokens++;
 		} else {

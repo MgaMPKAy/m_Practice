@@ -16,7 +16,6 @@ typedef enum token_type {
 	OpNot,
 } token_type;
 
-
 typedef struct token {
 	enum token_type type;
 	union {
@@ -24,12 +23,11 @@ typedef struct token {
 	} u;
 } token;
 
-/* Todo: fix symbol_table */
 typedef struct symbol_table {
 	int count;
-	char *name;
+	char *(*name)[];
 } symbol;
 
-bool scanner(char *str, struct token *tokens, struct symbol *symbol_table);
+bool scanner(char *, struct token *, struct symbol_table *);
 
 #endif /* _TOKEN_H_ */

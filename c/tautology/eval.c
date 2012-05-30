@@ -30,16 +30,17 @@ bool eval_single(struct expression *expr, int bitmap)
 	default:
 		break;
 	}
+	return -1;
 }
 
-int eval_all(struct expression *expr, struct symbol *sym_table)
+int eval_all(struct expression *expr, struct symbol_table *sym_table)
 {
 	int bitmap = 0;
-	int count = sym_table.count;
-	int pre = eval_single(expression, 0);
+	int count = sym_table->count;
+	int pre = eval_single(expr, 0);
 	int next;
 	for (; bitmap < (1<<count); bitmap++) {
-		next = eval_single(expression, bitmap);
+		next = eval_single(expr, bitmap);
 		if (next != pre) {
 			return -1;
 		}
