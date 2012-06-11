@@ -1,11 +1,11 @@
 module Types
     (
       Token(..)
-    , Associativity(..)
+    , Prop (..)
+    , Exp  (..)
+    , Term (..)
     , Name
-    , Precedence
     , isOperator, isVar, isConst
-    , opNot, opAnd, opOr,
     )
 where
 
@@ -13,29 +13,31 @@ data Token = Var Name
            | Const Bool
            | LeftParen
            | RightParen
-           | Operator {
-               unName  :: Name
-             , unPred  :: Precedence
-             , unAssoc :: Associativity
-             }
-             deriving (Show, Eq)
+           | OpNot
+           | OpAnd
+           | OpOr
+           | End
+             deriving (Eq)
+
+data Prop = PExp Exp
+          | POr Exp Prop
+            deriving (Eq)
+
+data Exp = ETerm Term
+         | EAnd Term Exp
+           deriving (Eq)
+
+data Term = TVar Name
+          | TParen Prop
+          | TNot Prop
+            deriving (Eq)
 
 type Name = String
-type Precedence = Int
 
-data Associativity = LeftAssoc | RightAssoc deriving (Show, Eq)
-
-
-isOperator (Operator _ _ _) = True
-isOperator _ = False
+isOperator t = t `elem` [OpNot, OpAnd, OpOr]
 
 isVar (Var _) = True
 isVar _ = False
 
 isConst (Const _) = True
 isConst _ = False
-
-opOr  = Operator "|" 1 LeftAssoc
-opAnd = Operator "&" 2 LeftAssoc
-opNot = Operator "~" 3 RightAssoc
-

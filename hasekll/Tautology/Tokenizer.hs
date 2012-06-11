@@ -7,7 +7,7 @@ where
 import Types
 
 tokenize :: String -> [Token]
-tokenize input = reverse $ tokenize' input [] []
+tokenize input = reverse $ End : tokenize' input [] []
 
 tokenize' [] varAcc tokens =
     if null varAcc
@@ -20,9 +20,9 @@ tokenize' (x:xs) varAcc tokens
     | x `elem` alphabet    = tokenize' xs (x : varAcc) tokens
     | x == '('             = addTokenLoop LeftParen
     | x == ')'             = addTokenLoop RightParen
-    | x == '&'             = addTokenLoop opAnd
-    | x == '~'             = addTokenLoop opNot
-    | x == '|'             = addTokenLoop opOr
+    | x == '&'             = addTokenLoop OpAnd
+    | x == '~'             = addTokenLoop OpNot
+    | x == '|'             = addTokenLoop OpOr
     | otherwise            = error "illegal input"
   where
     addTokenLoop token
