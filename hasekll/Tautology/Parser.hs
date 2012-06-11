@@ -16,6 +16,7 @@ parse' = do
       End -> return prop
       _   -> error "parser error"
 
+
 parseProp :: ParserState Prop
 parseProp = do
     exp <- parseExp
@@ -25,10 +26,10 @@ parseProp = do
           advnaceToken
           prop <- parseProp
           return $ POr exp prop
-      _ -> return $ PExp exp
+      _ -> return exp
 
 
-parseExp :: ParserState Exp
+parseExp :: ParserState Prop
 parseExp = do
     term <- parseTerm
     tk   <- currentToken
@@ -36,26 +37,26 @@ parseExp = do
       OpAnd -> do
           advnaceToken
           exp <- parseExp
-          return $ EAnd term exp
-      _ -> return $ ETerm term
+          return $ PAnd term exp
+      _ -> return term
 
 
-parseTerm :: ParserState Term
+parseTerm :: ParserState Prop
 parseTerm = do
     tk <- currentToken
     case tk of
-      Var name -> advnaceToken >> (return $ TVar name)
+      Var name -> advnaceToken >> (return $ PVar name)
       LeftParen -> do
           advnaceToken
           prop <- parseProp
           tk   <- currentToken
           case tk of
-            RightParen -> advnaceToken >> (return $ TParen prop)
+            RightParen -> advnaceToken >> (return prop)
             _          -> error "paren not match"
       OpNot -> do
           advnaceToken
-          prop <- parseProp
-          return $ TNot prop
+          prop <- parseTerm
+          return $ PNot prop
 
 
 currentToken :: ParserState Token
@@ -63,3 +64,11 @@ currentToken = get >>= return . head
 
 advnaceToken :: ParserState ()
 advnaceToken = modify (drop 1)
+
+
+
+{--
+Prop = Exp | Exp OpOr Prop
+Exp  = Term | Term OpAnd Exp
+Term = Var | OpNot Term | LeftParen Prop RightParen
+--}

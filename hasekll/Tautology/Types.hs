@@ -2,8 +2,6 @@ module Types
     (
       Token(..)
     , Prop (..)
-    , Exp  (..)
-    , Term (..)
     , Name
     , isOperator, isVar, isConst
     )
@@ -17,20 +15,13 @@ data Token = Var Name
            | OpAnd
            | OpOr
            | End
-             deriving (Eq)
+             deriving (Show, Eq)
 
-data Prop = PExp Exp
-          | POr Exp Prop
-            deriving (Eq)
-
-data Exp = ETerm Term
-         | EAnd Term Exp
-           deriving (Eq)
-
-data Term = TVar Name
-          | TParen Prop
-          | TNot Prop
-            deriving (Eq)
+data Prop = PAnd Prop Prop
+          | POr Prop Prop
+          | PNot Prop
+          | PVar Name
+            deriving (Show, Eq)
 
 type Name = String
 
