@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include "token.h"
-#include "expression.h"
+#include "types.h"
+#include "eval.h"
 
 bool get_bit(int n, int decimal)
 {
@@ -10,66 +10,46 @@ bool get_bit(int n, int decimal)
 
 int eval_single(struct expression *expr, int bitmap)
 {
-	if (expr == NULL)
-		return -2;
-	int x = 0;
+	if (expr == NULL) return -1;
+
 	switch (expr->type) {
 	case VarExp:
-		x = get_bit(expr->u.varID, bitmap);
-		printf("var = %d\n", x);
-		return x;
-		break;
-	case OpExp:
-		switch (expr->u.op) {
-		case OpNot:
-			return ! eval_single(expr->u.left, bitmap);
-		case OpAnd:
-			return eval_single(expr->u.left, bitmap)
-				&& eval_single(expr->u.right, bitmap);
-		case OpOr:
-		default:
-			return eval_single(expr->u.left, bitmap)
-				|| eval_single(expr->u.right, bitmap);
-			break;
-		}
-		break;
-	default:
-		break;
+		return get_bit(expr->u.var_id, bitmap);
+	case NotExp:
+		return ! eval_single(expr->u.left, bitmap);
+	case AndExp:
+		return eval_single(expr->u.left, bitmap)
+			&& eval_single(expr->u.right, bitmap);
+	case OrExp:
+		return eval_single(expr->u.left, bitmap)
+			|| eval_single(expr->u.right, bitmap);
 	}
 	return -1;
 }
 
-int eval_all(struct expression *expr, struct symbol_table *sym_table)
+int eval_all(struct expression *expr)
 {
 	int bitmap = 0;
-	int count = sym_table->count;
+	int count = symbol_table->count;
 	int pre = eval_single(expr, 0);
 	int max = 1 << count;
 	int next;
-	printf("count = %d\n", count);
-	printf("max   = %d\n", 1<<(count));
 
 	for (; bitmap < max; bitmap++) {
-		printf("bitmap = %d\n", bitmap);
 
 		next = eval_single(expr, bitmap);
-		printf("next = %d\n", next);
-
 		if (next != pre) {
 			return -1;
 		}
 		pre = next;
-		printf("%s\n", "----");
-
 	}
 	return pre;
 }
 
-void print_truth_table(struct expression *expr,
-		       struct symbol_table *sym_table)
+void print_truth_table(struct expression *expr)
 {
-	int count  = sym_table->count;
-	char *(*name) = *(sym_table->name);
+	int count  = symbol_table->count;
+	char *(*name) = *(symbol_table->name);
 	int bitmap = 0;
 	int result = 0;
 	int len    = 0;
