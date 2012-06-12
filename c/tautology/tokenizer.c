@@ -34,6 +34,7 @@ void advanceToken()
 
 	if (current_token != NULL) {
 		free(current_token);
+		current_token = NULL;
 	}
 	current_token = malloc(sizeof(struct token));
 
@@ -97,6 +98,7 @@ void advanceToken()
 		break;
 	default:
 		free(current_token);
+		current_token = NULL;
 		printf("tokenize error: unexpected char");
 		break;
 	}
@@ -106,21 +108,12 @@ void init()
 {
 	if (symbol_table != NULL) {
 		free(symbol_table);
+		symbol_table = NULL;
 	}
 	symbol_table = new_symbol_table(32);
 
 	if (current_token != NULL) {
 		free(current_token);
+		current_token = NULL;
 	}
-}
-
-int test(int argc, char *argv[])
-{
-	init();
-	while (1) {
-		advanceToken();
-		printf("type = %d ", current_token->type);
-		printf("var_id = %d\n", current_token->u.var_id);
-	}
-	return 0;
 }

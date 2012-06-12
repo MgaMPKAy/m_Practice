@@ -12,8 +12,10 @@ struct expression *parse_term()
 {
 	struct expression *term;
 
+	if (current_token == NULL) return NULL;
 	switch (current_token->type) {
 	case Var:
+		advanceToken();
 		term = malloc(sizeof(struct expression));
 		term->type = VarExp;
 		term->u.var_id = current_token->u.var_id;
@@ -54,6 +56,8 @@ struct expression *parse_exp()
 		return NULL;
 	}
 
+	if (current_token == NULL) return NULL;
+
 	switch(current_token->type) {
 	case OpAnd:
 		advanceToken();
@@ -77,6 +81,7 @@ struct expression *parse_prop()
 	if (exp == NULL) {
 		return NULL;
 	}
+	if (current_token == NULL) return NULL;
 	switch(current_token->type) {
 	case OpOr:
 		advanceToken();
@@ -96,12 +101,13 @@ struct expression *parse_prop()
 
 struct expression *parse()
 {
+	advanceToken();
 	struct expression *prop = parse_prop();
 
 	if (prop == NULL) {
 		return NULL;
 	}
-
+	if (current_token == NULL) return NULL;
 	switch(current_token->type) {
 	case End:
 		return prop;
