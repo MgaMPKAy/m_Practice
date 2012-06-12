@@ -31,6 +31,8 @@ void advanceToken()
 	char *new_var_name;
 	int max_length = 10;
 	int ch = getchar();
+	int i = 0;
+	int j = 0;
 
 	if (current_token != NULL) {
 		free(current_token);
@@ -48,8 +50,6 @@ void advanceToken()
 	if (is_alphabet(ch) || is_digits(ch)) {
 		current_token->type = Var;
 		new_var_name = malloc(sizeof(char) * max_length);
-		int i = 0;
-		int j = 0;
 
 		while (is_alphabet(ch) || is_digits(ch)) {
 			new_var_name[i++] = ch;

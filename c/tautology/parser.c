@@ -15,10 +15,10 @@ struct expression *parse_term()
 	if (current_token == NULL) return NULL;
 	switch (current_token->type) {
 	case Var:
-		advanceToken();
 		term = malloc(sizeof(struct expression));
 		term->type = VarExp;
 		term->u.var_id = current_token->u.var_id;
+		advanceToken();
 		return term;
 	case LeftParen:
 		advanceToken();

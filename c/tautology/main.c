@@ -7,6 +7,7 @@
 #include "tokenizer.h"
 #include "parser.h"
 #include "eval.h"
+#include "print_prop.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
 			printf("%s\n", "parser error");
 			continue;
 		}
+		print_prop(exp);
 		rval = eval_all(exp);
 		switch (rval) {
 		case -1:
