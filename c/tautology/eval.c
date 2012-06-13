@@ -62,10 +62,8 @@ int eval_all(struct expression *expr)
 	int pre = eval_single(expr, 0);
 	int max = 1 << count;
 	int next;
-	printf ("bitmap = %d  next = %d\n", 0 , pre);
 	for (bitmap = 1; bitmap < max; bitmap++) {
 		next = eval_single(expr, bitmap);
-		printf ("bitmap = %d  next = %d\n", bitmap, next);
 		if (next == -1) {
 			return -1;
 		}
@@ -88,9 +86,8 @@ void print_truth_table(struct expression *expr)
 	for (int i = 0; i < count; i++) {
 		printf("%s ", name[i]);
 	}
-	printf("result\n");
-	printf("%s",   "-----------------------------------------------");
-	printf("%s\n", "-----------------------------------------------");
+	printf("  result\n");
+	printf("%s\n",   "-----------------------------------------------");
 
 	for (; bitmap < (1<<count); bitmap++) {
 		for (int i = 0; i < count; i++) {
@@ -98,7 +95,7 @@ void print_truth_table(struct expression *expr)
 			for(int j = 0; j < len / 2; j++) {
 				printf("%c",' ');
 			}
-			printf("%c", get_bit(i, bitmap) ? 'T' : 'F');
+			printf("%c ", get_bit(i, bitmap) ? 'T' : 'F');
 
 			for(int j = 0; j < len / 2; j++) {
 				printf("%c",' ');

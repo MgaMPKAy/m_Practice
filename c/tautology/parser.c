@@ -101,6 +101,7 @@ struct expression *parse_prop()
 
 struct expression *parse()
 {
+	init();
 	advanceToken();
 	struct expression *prop = parse_prop();
 
