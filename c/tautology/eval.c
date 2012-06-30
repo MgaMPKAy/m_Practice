@@ -13,45 +13,17 @@ int eval_single(struct expression *expr, int bitmap)
 {
 	if (expr == NULL) return -1;
 
-	int rval = 0;
-	int rval2 = 0;
 	switch (expr->type) {
 	case VarExp:
-		rval = get_bit(expr->u.var_id, bitmap);
-		if (!(rval == 0 || rval == 1)) {
-			return -1;
-		} else {
-			return rval;
-		}
-		break;
+		return get_bit(expr->u.var_id, bitmap);
 	case NotExp:
-		rval = eval_single(expr->u.left, bitmap);
-		if (!(rval == 0 || rval == 1)) {
-			return -1;
-		} else {
-			return ! rval;
-		}
-		break;
+		return ! eval_single(expr->u.left, bitmap);
 	case AndExp:
-		rval  = eval_single(expr->u.left, bitmap);
-		rval2 = eval_single(expr->u.right, bitmap);
-		if ((!(rval == 0 || rval == 1)) || (!(rval2 == 0 || rval2 ==1))) {
-			return -1;
-		} else {
-			return rval && rval2;
-		}
-		break;
+		return eval_single(expr->u.left, bitmap)
+			&& eval_single(expr->u.right, bitmap);
 	case OrExp:
-		rval  = eval_single(expr->u.left, bitmap);
-		rval2 = eval_single(expr->u.right, bitmap);
-		if ((!(rval == 0 || rval == 1)) || (!(rval2 == 0 || rval2 ==1))) {
-			return -1;
-		} else {
-			return rval || rval2;
-		}
-		break;
-	default:
-		return -1;
+		return eval_single(expr->u.left, bitmap)
+			|| eval_single(expr->u.right, bitmap);
 	}
 }
 
@@ -64,12 +36,7 @@ int eval_all(struct expression *expr)
 	int next;
 	for (bitmap = 1; bitmap < max; bitmap++) {
 		next = eval_single(expr, bitmap);
-		if (next == -1) {
-			return -1;
-		}
-		if (next != pre) {
-			return 2;
-		}
+		if (next != pre) return 2;
 		pre = next;
 	}
 	return pre;
