@@ -10,7 +10,7 @@
 
 void set_bit(int nth, int *bitmap, int b);
 void handle_error();
-void handle_ture(struct expression*);
+void handle_true(struct expression*);
 void handle_false(struct expression*);
 void handle_satisfactible(struct expression*);
 
@@ -74,7 +74,7 @@ void handle_false(struct expression *exp)
 		print_truth_table(exp);
 }
 
-void handle_ture(struct expression *exp)
+void handle_true(struct expression *exp)
 {
 	char yesorno;
 	int tmp_char;
