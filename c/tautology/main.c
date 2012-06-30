@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
 			handle_error();
 			break;
 		case 0:
-			handle_ture(exp);
+			handle_false(exp);
 			break;
 		case 1:
-			handle_false(exp);
+			handle_true(exp);
 			break;
 		case 2:
 			handle_satisfactible(exp);
