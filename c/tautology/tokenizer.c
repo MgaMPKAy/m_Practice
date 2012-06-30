@@ -9,12 +9,7 @@ struct symbol_table *symbol_table;
 
 bool is_alphabet(char c)
 {
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
-}
-
-bool is_digits(char c)
-{
-	return (c >= '0' && c <= '9');
+	return (c >= 'A' && c <= 'Z');
 }
 
 struct symbol_table *new_symbol_table(int count)
@@ -33,6 +28,7 @@ void advanceToken()
 	int ch = getchar();
 	int i = 0;
 	int j = 0;
+	int tmp_char;
 
 	if (current_token != NULL) {
 		free(current_token);
@@ -47,11 +43,11 @@ void advanceToken()
 
 	/* token_type -> Var */
 	/* ugly code, should be factored out */
-	if (is_alphabet(ch) || is_digits(ch)) {
+	if (is_alphabet(ch)) {
 		current_token->type = Var;
 		new_var_name = malloc(sizeof(char) * max_length);
 
-		while (is_alphabet(ch) || is_digits(ch)) {
+		while (is_alphabet(ch)) {
 			new_var_name[i++] = ch;
 			if (i >= max_length) {current_token = NULL; return;};
 			ch = getchar();
@@ -99,7 +95,8 @@ void advanceToken()
 	default:
 		free(current_token);
 		current_token = NULL;
-		printf("tokenize error: unexpected char");
+		printf("tokenize error: unexpected char: %c\n", ch);
+		while((tmp_char = getchar()) != '\n');
 		break;
 	}
 }

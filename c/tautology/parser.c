@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include "types.h"
 #include "tokenizer.h"
 #include "parser.h"
@@ -7,6 +8,8 @@
 struct expression *parse_term();
 struct expression *parse_exp();
 struct expression *parse_prop();
+struct expression *new_expression();
+void   destroy_expression(struct expression*);
 
 struct expression *parse_term()
 {
@@ -15,7 +18,7 @@ struct expression *parse_term()
 	if (current_token == NULL) return NULL;
 	switch (current_token->type) {
 	case Var:
-		term = malloc(sizeof(struct expression));
+		term = new_expression();
 		term->type = VarExp;
 		term->u.var_id = current_token->u.var_id;
 		advanceToken();
@@ -35,7 +38,7 @@ struct expression *parse_term()
 		}
 	case OpNot:
 		advanceToken();
-		term = malloc(sizeof(struct expression));
+		term = new_expression();
 		term->type = NotExp;
 		term->u.right = NULL;
 		term->u.left = parse_term();
@@ -61,7 +64,7 @@ struct expression *parse_exp()
 	switch(current_token->type) {
 	case OpAnd:
 		advanceToken();
-		struct expression *exp = malloc(sizeof(struct expression));
+		struct expression *exp = new_expression();
 		exp->type = AndExp;
 		exp->u.left = term;
 		exp->u.right = parse_exp();
@@ -85,7 +88,7 @@ struct expression *parse_prop()
 	switch(current_token->type) {
 	case OpOr:
 		advanceToken();
-		struct expression *prop = malloc(sizeof(struct expression));
+		struct expression *prop = new_expression();
 		prop->type = OrExp;
 		prop->u.left = exp;
 		prop->u.right = parse_prop();
@@ -115,4 +118,21 @@ struct expression *parse()
 	default:
 		return NULL;
 	}
+}
+
+struct expression *new_expression()
+{
+	struct expression *exp = malloc(sizeof(struct expression));
+	bzero(exp, sizeof(struct expression));
+	return exp;
+}
+
+void destroy_expression(struct expression *exp)
+{
+	if (exp == NULL) return;
+	if (exp->type != VarExp) {
+		destroy_expression(exp->u.left);
+		destroy_expression(exp->u.right);
+	}
+	free(exp);
 }
