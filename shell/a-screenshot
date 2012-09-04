@@ -1,0 +1,4 @@
+#!/bin/bash
+
+now=`date +%F-%T`
+import "/tmp/workspace/screenshot-"$(date +%F_%T)".png"

@@ -1,0 +1,87 @@
+#!/bin/bash
+
+
+Cmd=$1
+Target=$2
+
+ConfigPath=/tmp
+ArchiveFileName=
+SetupPath=$SETUP_DIR
+
+# set up ArchiveFileName
+case "$Target" in
+    "chromium" )
+	ArchiveFileName=chromium.tar.gz
+	;;
+    "emacs" )
+	ArchiveFileName=emacs.d.tar.gz
+	;;
+    * )
+	exit 1
+	;;
+esac
+ArchiveFilePath=$SetupPath/$ArchiveFileName
+
+# run command
+case "$Cmd" in
+    "setup" )
+	case "$Target" in
+	    "chromium" )
+		# check
+		if [[ -d $ConfigPath/Pathchromium ]]; then
+		    if [[ -e $ConfigPath/chromium/ChromiumSetuped ]]; then
+			echo Chromium: Already set up
+			exit 0
+		    fi
+		    echo Chromium: Target exist. Please delete /tmp/chromium
+		    exit
+		fi
+
+		;;
+	    "emacs" )
+		# check
+		if [[ -d $ConfigPath/emacs.d ]]; then
+		    echo Emacs: Already set up
+		    exit 1
+		fi
+		;;
+	esac
+
+        # make use of cache
+	cat $ArchiveFilePath > /dev/null
+
+	tar xf $ArchiveFilePath -C $ConfigPath
+
+	;;
+    "backup" )
+	case "$Target" in
+	    "chromium" )
+		# Backup iff setuped
+		if [[ -e $ConfigPath/chromium/ChromiumSetuped ]]; then
+		    cd $ConfigPath
+		    rm chromium/Safe\ *
+		    #rm chromium/Default/Application\ Cache/* -r
+		    tar acf $ArchiveFileName chromium
+		    cp $ArchiveFileName $ArchiveFilePath
+		    echo "Chromium config is backuped"
+		else
+		    echo "Chromium config is not setuped"
+		fi
+
+		;;
+	    "emacs" )
+                # Backup if setuped
+		if [[ ! -d $ConfigPath/emacs.d ]]; then
+		    echo "Emacs config is not setuped"
+		else
+		    cd $ConfigPath
+		    /bin/rm /tmp/emacs.d/auto-save-list/.save*
+		    tar acf $ArchiveFileName emacs.d
+		    cp $ArchiveFileName $ArchiveFilePath
+		    echo "Emacs config is backuped"
+		fi
+
+		;;
+	esac
+	;;
+esac

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+MOUNTED=$(mount | grep '/home/adlezz/devel')
+
+if [[ -n "$MOUNTED" ]]; then
+    busy_process=`lsof -t /home/adlezz/devel`
+    if [[ -n "$busy_process" ]]; then
+	kill -9 $busy_process
+    fi
+    sudo umount /home/adlezz/devel
+#    gzip /tmp/devfs &&
+#    cp /tmp/devfs.gz /home/adlezz/setup
+#    exit
+else
+    echo "devfs is not mounted"
+    exit
+fi

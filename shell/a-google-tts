@@ -1,0 +1,11 @@
+#!/bin/bash
+
+USER_AGENT="User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)"
+URL="http://translate.google.cn/translate_tts"
+Q=$@
+DATA="-d ie=UTF-8 -d tl=en --data-urlencode q="
+
+curl -G -A "$USER_AGENT" "$URL" $DATA"${Q}" -o google-tts-tmp > /dev/null 2>&1
+mplayer google-tts-tmp > /dev/null 2>&1
+
+#mplayer "http://translate.google.com/translate_tts?q="

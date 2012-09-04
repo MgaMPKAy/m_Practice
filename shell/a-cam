@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# gst-launch v4l2src ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! theoraenc ! oggmux ! filesink location=./out.ogg
+ffmpeg -f v4l2 -s 640x480 -i /dev/video0 out.mpg

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ -z $1 ]]
+then
+    echo usage: a-exch to|form KFAT1|github
+fi
+
+if [[ $1 = "to" ]]
+then
+    if [[ $2 = "KFAT1" ]]
+    then
+	#rsync -r -v --existing  /tmp/workspace/ /media/KFAT1/workspace/
+	rsync -r -v   /tmp/workspace/ /media/KFAT1/workspace/
+    fi
+fi
+
+if [[ $1 = "from" ]]
+then
+    if [[ $2 = "KFAT1" ]]
+    then
+	rsync -r -v /media/KFAT1/workspace/ /tmp/workspace/
+    fi
+fi
+
+
+if [[ $1 = "github" ]]
+then
+    a-git-clone-mga
+fi

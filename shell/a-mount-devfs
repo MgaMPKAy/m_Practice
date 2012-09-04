@@ -1,0 +1,19 @@
+#!/bin/bash
+
+MOUNTED=$(mount | grep '/home/adlezz/devel')
+
+if [[ "$MOUNTED" ]]; then
+    echo "devfs already mounted"
+    exit
+fi
+
+# cp /home/adlezz/setup/devfs.gz /tmp
+# gzip -d /tmp/devfs.gz
+# sudo mount /tmp/devfs /home/adlezz/devel
+
+# make use of cache
+cat /home/adlezz/setup/devfs > /dev/null
+sudo mount -o commit=900,noatime /home/adlezz/setup/devfs /home/adlezz/devel
+
+# why again?
+cat /home/adlezz/setup/devfs > /dev/null

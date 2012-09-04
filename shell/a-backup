@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo please specific a name
+    exit
+fi
+name=$1
+ARCHIVE_FILE=$name.tar.bz2
+BACKUP_DIR=$SETUP_DIR
+TMP_ROOT=/tmp/tmproot
+
+CURRENT_DIR=$(pwd)
+cd $TMP_ROOT
+tar acf $ARCHIVE_FILE .
+cp $ARCHIVE_FILE $BACKUP_DIR
+cd $CURRENT_DIR

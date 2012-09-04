@@ -1,8 +1,8 @@
 (custom-set-variables
  ;; Emacs
- '(debug-on-error 0)
+ '(debug-on-error t)
  '(inhibit-startup-screen t)
- '(make-backup-files 0)
+ '(make-backup-files nil)
  ;; C
  '(c-default-style
    (quote
@@ -38,8 +38,12 @@
 (scroll-bar-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
 (set-face-attribute 'default nil :height 100)
+;; (setq next-line-add-newlines t)
 
 (put 'set-goal-column 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
 ;;(sml-modeline-mode t)
 
 ;; Rainbow-delimiters
@@ -70,6 +74,7 @@
 ;; Haskell mode
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+
 ;; ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 ;; ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;; ;; (setq haskell-font-lock-symbols t)
@@ -95,6 +100,8 @@
 
 
 ;; ===================== Editing Helpers (yas, ac) ======================
+(add-to-list 'load-path "~/.emacs.d/elpa/dropdown-list-1.45/")
+(require 'dropdown-list)
 
 ;; YASnippet
 (add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-0.6.1/")
@@ -119,10 +126,10 @@
 
 ;; Auto-complete (Evil)
 (add-to-list 'load-path "~/.emacs.d/extensions/auto-complete")
-(setq ac-dict-dictionary "~/.emacs.d/extensions/auto-complete/ac-dict")
-(require 'go-autocomplete)
+;; (require 'go-autocomplete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories ac-dict-dictionary)
+(add-to-list 'ac-dictionary-directories
+	     "~/.emacs.d/extensions/auto-complete/ac-dict")
 (ac-config-default)
 (setq ac-auto-start 2)
 (setq ac-auto-show-menu nil)
@@ -165,58 +172,72 @@
 ;;     (selection-face . ac-yasnippet-selection-face))
 ;;   "Source for Yasnippet.")
 
+
+(electric-pair-mode 1)
 ;; ================================ MISC =============================
 
 ;; Move forward to Nth occurence of CHAR.
-(defun wy-go-to-char (n char)
+(defun go-to-char (n char)
   "Move forward to Nth occurence of CHAR.
-   Typing `wy-go-to-char-key' again will move forwad to the next Nth
+   Typing `go-to-char-key' again will move forwad to the next Nth
    occurence of CHAR."
   (interactive "p\ncGo to char: ")
   (search-forward (string char) nil nil n)
-  (while (char-equal (read-char)
-		     char)
-    (search-forward (string char) nil nil n))
+  (catch 'read-char-expception
+    (while (char-equal (read-char)
+		       char)
+      (search-forward (string char) nil nil n)))
   (setq unread-command-events (list last-input-event)))
-(define-key global-map (kbd "C-c a") 'wy-go-to-char)
+
+
+;; Insert four space
+(defun insert-four-spaces (char)
+  "Insert four space when ?t or ?T was pressed"
+  (interactive "p\cInsert-four-space: ")
+  (insert "    ")
+  (while (char-equal (upcase (read-char)) ?\t)
+      (insert "    "))
+  (setq unread-command-events (list last-input-event)))
+
 
 ;; Remove trailing whilespace when save file
 (add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
-;; Kill buffer
-(global-set-key (kbd "M-C-k") 'kill-this-buffer)
-
-(defun auto-recompile-emacs-file ()
+(defun recompile-dot-emacs ()
   (interactive)
-  (when (and buffer-file-name (string-match "\\.emacs" buffer-file-name))
-    (let ((byte-file (concat buffer-file-name "\\.elc")))
-      (if (or (not (file-exists-p byte-file))
-	      (file-newer-than-file-p buffer-file-name byte-file))
-	  (byte-compile-file buffer-file-name)))))
+  (byte-compile-file "~/.emacs"))
+;;  (when (and buffer-file-name (string-match "\\.emacs" buffer-file-name))
+;;    (let ((byte-file (concat buffer-file-name "\\.elc")))
+;;      (if (or (not (file-exists-p byte-file))
+;;	      (file-newer-than-file-p buffer-file-name byte-file))
+;;	  (byte-compile-file buffer-file-name)))))
 ;;(add-hook 'after-save-hook 'auto-recompile-emacs-file)
 
 ;; occur in multi-buffer
-;; (eval-when-compile
-;;   (require 'cl))
+(eval-when-compile
+  (require 'cl))
 
-;; (defun get-buffers-matching-mode (mode)
-;;   "Returns a list of buffers where their major-mode is equal to MODE"
-;;   (let ((buffer-mode-matches '()))
-;;    (dolist (buf (buffer-list))
-;;      (with-current-buffer buf
-;;        (if (eq mode major-mode)
-;;            (add-to-list 'buffer-mode-matches buf))))
-;;    buffer-mode-matches))
+(defun get-buffers-matching-mode (mode)
+  "Returns a list of buffers where their major-mode is equal to MODE"
+  (let ((buffer-mode-matches '()))
+   (dolist (buf (buffer-list))
+     (with-current-buffer buf
+       (if (eq mode major-mode)
+           (add-to-list 'buffer-mode-matches buf))))
+   buffer-mode-matches))
 
-;; (defun multi-occur-in-this-mode ()
-;;   "Show all lines matching REGEXP in buffers with this major mode."
-;;   (interactive)
-;;   (multi-occur
-;;    (get-buffers-matching-mode major-mode)
-;;    (car (occur-read-primary-args))))
+(defun multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with this major mode."
+  (interactive)
+  (multi-occur
+   (get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
 
-;; global key for `multi-occur-in-this-mode' - you should change this.
-;; (global-set-key (kbd "C-<f2>") 'multi-occur-in-this-mode)
+(defun kill-whole-word ()
+  "Kill whole world"
+  (interactive)
+  (forward-word)
+  (backward-kill-word 1))
 
 (global-unset-key [(control z)])
 (global-unset-key [(control x)(control z)])
@@ -224,8 +245,20 @@
 (global-set-key (kbd "<f5>") 'compile)
 (global-set-key (kbd "<f6>") 'flymake-mode)
 
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
+(define-key global-map (kbd "C-c a") 'go-to-char)
+(global-set-key (kbd "C-c o") 'occur)
+(global-set-key (kbd "C-c m") 'multi-occur-in-this-mode)
+(global-set-key (kbd "C-c r") 'replace-regexp)
+(global-set-key (kbd "C-c c") 'comment-region)
+(global-set-key (kbd "C-c u c") 'uncomment-region)
+(global-set-key (kbd "C-c t") 'insert-four-spaces)
+(global-set-key (kbd "C-c k") 'kill-whole-line)
+(global-set-key (kbd "C-c d") 'kill-whole-word)
+;; (global-set-key (kbd "C-c k b") 'kill-this-buffer)
+;; (global-set-key (kbd "C-c k c") 'comment-kill)
+(global-set-key (kbd "M-C-k") 'kill-this-buffer)
+(define-key global-map (kbd "C-c TAB") 'insert-four-spaces)
+
 ;; (global-set-key [(control z)] 'undo)
 
 ;; Compile improve

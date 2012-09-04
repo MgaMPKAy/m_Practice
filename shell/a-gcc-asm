@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#gcc -fno-asynchronous-unwind-tables -S -masm=intel $@
+gcc -fno-asynchronous-unwind-tables -S $@

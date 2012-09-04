@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# default mount point
+MOUNT_POINT=$KFAT1
+
+# change mount point according to $1
+if [ -n "$1" ]; then
+    MOUNT_POINT=$1
+fi
+
+# check if mounted
+MOUNTED=$(mount | grep $MOUNT_POINT)
+
+if [ "$MOUNTED" ]; then
+    echo "$MOUNT_POINT already mounted"
+    exit
+fi
+
+# mkdir
+if [ ! -d $MOUNT_POINT ]; then
+    sudo mkdir $MOUNT_POINT -m 755
+    if [ $? -ne  0 ]; then
+	exit $?
+    fi
+fi
+
+# mount
+sudo mount -o utf8=1 /dev/sdb $MOUNT_POINT
+
+# sudo chown adlezz:users $MOUNT_POINT

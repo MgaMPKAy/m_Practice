@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# if [ -z "$1" ]; then
+#     arg="inplace"
+# else
+#     arg=$1
+# fi
+
+# a-mount-kfat1 && a-setup mplayer && a-copy-random-music $arg play
+
+a-setup mplayer
+#cp ~/media/musics/Shoujo.Kakumei.Utena/少女革命ウテナ.輪舞.revolution.アドゥレセンス・ラッシュ.mp3 /tmp/
+cp ~/media/musics/Touhou.Project/last-bosses.mp3 /tmp/
+exec mplayer /tmp/*.mp3 -loop 0

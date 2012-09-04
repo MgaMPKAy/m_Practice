@@ -1,0 +1,57 @@
+#!/bin/sh
+
+unset DBUS_SESSION_BUS_ADDRESS
+unset SESSION_MANAGER
+
+serverargs=""
+
+XAUTHORITY=$HOME/.Xauthority
+export XAUTHORITY
+
+removelist=
+
+hostname=a300
+
+authdisplay=${display:-:0}
+
+# mcookie=`/usr/bin/mcookie`
+mcookie=7064ef30054af355a4f0a25d946971a3
+
+dummy=0
+
+# xserverauthfile=`mktemp -p /tmp .serverauth.XXXXXXXXXX`
+
+xserverauthfile=/tmp/.serverauth
+touch $xserverauthfile
+
+trap "rm -f '$xserverauthfile'" HUP INT QUIT ILL TRAP KILL BUS TERM
+xauth -q -f "$xserverauthfile" << EOF
+add :$dummy . $mcookie
+EOF
+
+serverargs=${serverargs}" -auth "${xserverauthfile}
+
+for displayname in $authdisplay $hostname/unix$authdisplay; do
+    authcookie=`xauth list "$displayname" \
+        | sed -n "s/.*$hostname\/unix$authdisplay[[:space:]*].*[[:space:]*]//p"` 2>/dev/null;
+    if [[ "z${authcookie}" = "z" ]] ; then
+        xauth -q << EOF
+add $displayname . $mcookie
+EOF
+        removelist="$displayname $removelist"
+    else
+        dummy=$(($dummy+1));
+        xauth -q -f "$xserverauthfile" << EOF
+add :$dummy . $authcookie
+EOF
+    fi
+done
+
+exec xinit /home/adlezz/.xinitrc -- /home/adlezz/.xserverrc :0 $serverargs
+
+#retval=$?
+
+#xauth remove :0
+#rm -f "$xserverauthfile"
+
+#exit $retval

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+cmd=$1
+
+case "$cmd" in
+    "reboot" )
+	curl --user admin:admin 'http://192.168.0.1/cli.cgi?cmd=reboot'
+	;;
+
+    "limit" )
+	curl --user admin:admin '192.168.0.1/cli.cgi?cnum=3&cmd=$qos_bwl_enable=1%25;$nat_hwmode=1%25;commit'
+	;;
+
+    "unlimit" )
+	curl --user admin:admin '192.168.0.1/cli.cgi?cnum=3&cmd=$qos_bwl_enable=0%25;$nat_hwmode=0%25;commit'
+	;;
+    "strong-limit" )
+	curl --user admin:admin '192.168.0.1/cli.cgi?cnum=5&cmd=$qos_bwl_acl2=1;192.168.0.2;192.168.0.2;200;30%25;$qos_bwl_acl3=1;192.168.0.3;192.168.0.3;200;30%25;$qos_bwl_acl4=1;192.168.0.4;192.168.0.4;200;30%25;$qos_bwl_acl1=1;192.168.0.155;192.168.0.155;200;30%25;$qos_bwl_enable=1%25;$nat_hwmode=1%25;commit'
+	;;
+    "week-limit" )
+	curl --user admin:admin '192.168.0.1/cli.cgi?cnum=5&cmd=$qos_bwl_acl1=1;192.168.0.2;192.168.0.2;250;35%25;$qos_bwl_acl2=1;192.168.0.3;192.168.0.3;250;35%25;$qos_bwl_acl3=1;192.168.0.4;192.168.0.4;250;35%25;$qos_bwl_acl4=1;192.168.0.155;192.168.0.155;250;35%25;$qos_bwl_enable=1%25;$nat_hwmode=1%25;commit'
+esac

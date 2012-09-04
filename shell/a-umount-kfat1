@@ -1,0 +1,11 @@
+#!/bin/bash
+
+MOUNTED=$(mount | grep $KFAT1)
+
+if [ -n "$MOUNTED" ]; then
+    sudo umount $KFAT1
+    exit
+else
+    echo "$KFAT1 is not mounted"
+    exit
+fi

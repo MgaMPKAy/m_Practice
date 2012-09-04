@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gcc  -I /home/adlezz/.bin/include/ -LD /home/adlezz/.bin/lib/libmpi.so $@

@@ -1,5 +1,4 @@
-Config {-- font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
-        -- font = "xft:Dejavu Sans Mono"
+Config {
         font = "xft:WenQuanYi Micro Hei :size=8:antialias=false"
        , bgColor = "black"
        , fgColor = "grey"
@@ -7,8 +6,7 @@ Config {-- font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
        , lowerOnStart = True
        , borderColor = "black"
        , border = NoBorder
-       , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","grey","--high","red"] 30
-                    --, Run Cpu ["-L","15","-H","50","--normal","green","--high","red"] 15
+       , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","grey","--high","red", "-t", "Net: <rx> / <tx>KB"] 30
 		    , Run MultiCpu ["-t", "Cpu: <total0>% <total1>%", "--high", "red"] 30
                     , Run Memory ["-t","Mem: <usedratio>% (<cache>M)", "--high", "red"] 30
                     , Run Swap [] 45
@@ -17,5 +15,12 @@ Config {-- font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %multicpu% | %memory% %swap% | %eth0% | %date% "
+       , template = "%StdinReader% }{ %multicpu% | %memory% %swap% | %eth0% |%date% "
+
        }
+
+-- font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
+-- font = "xft:Dejavu Sans Mono"
+--, Run Network "ppp0" ["-L","0","-H","32","--normal","grey","--high","red"] 30
+--, Run Cpu ["-L","15","-H","50","--normal","green","--high","red"] 15
+--, template = "%StdinReader% }{ %multicpu% | %memory% %swap% |%date% "

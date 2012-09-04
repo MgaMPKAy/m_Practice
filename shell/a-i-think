@@ -1,0 +1,9 @@
+#!/bin/bash
+
+FILE=~/devel/ithink
+
+if [[ -z "$1" ]]; then
+    cat $FILE
+    exit
+fi
+echo $(date)" #" "$@">> $FILE

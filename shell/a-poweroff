@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Backup ~/setups
+a-umount-devfs
+a-config backup chromium
+
+# Sync
+sync
+sync
+
+# Poweroff
+sudo systemctl poweroff
