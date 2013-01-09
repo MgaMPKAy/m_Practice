@@ -3,9 +3,10 @@
 PREFIX=/tmp/tmproot
 
 cd /tmp/workspace
-wget http://www.php.net/distributions/php-5.4.0.tar.bz2
-tar xf php-5.4.0.tar.bz2
-cd php-5.4.0
+wget http://www.php.net/distributions/php-5.4.10.tar.bz2
+tar xf php-5.4.10.tar.bz2
+cd php-5.4.10
+PREFIX=/tmp/tmproot
 ./configure \
 --prefix=$PREFIX \
 --sbindir=$PREFIX/bin \
@@ -21,19 +22,30 @@ cd php-5.4.0
 --with-png-dir  \
 --with-freetype-dir \
 --with-gmp \
+--with-openssl \
 --enable-mbstring  \
---with-mysqli=mysqlnd \
---with-pdo-mysql=mysqlnd  \
 --enable-sysvmsg \
 --enable-sysvsem \
 --enable-sysvshm \
+--enable-phar \
+--enable-pcntl \
+--enable-sockets \
+--enable-soap \
+--with-bz2 \
+--with-gmp \
+--with-mhash \
+--with-xmlrpc \
+--with-zlib \
+--with-pdo-sqlite \
+--with-sqlite3 \
 --with-pear
+
 make && make install
 
 cd /tmp/workspace
-wget http://nginx.org/download/nginx-1.0.13.tar.gz
-tar xf nginx-1.0.13.tar.gz
-cd nginx-1.0.13
+wget http://nginx.org/download/nginx-1.2.6.tar.gz
+tar xf nginx-1.2.6.tar.gz
+cd nginx-1.2.6
 ./configure \
 --prefix=$PREFIX \
 --sbin-path=$PREFIX/bin/nginx \
