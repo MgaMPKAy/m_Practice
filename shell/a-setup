@@ -1,7 +1,8 @@
 #!/bin/bash
 
-U_ARCHIVES_DIR=$KFAT1/bin
-MISC_ARCHIVES_DIR=~/misc/bin
+U_ARCHIVES_DIR=/tmp/u/packages
+MISC_ARCHIVES_DIR=~/misc/packages
+
 TMP_ROOT=/tmp/tmproot
 TMP_BIN_PATH=$TMP_ROOT/bin
 SETUPED_FILE=$TMP_ROOT/setuped
@@ -23,8 +24,8 @@ case "$1" in
 	ls $MISC_ARCHIVES_DIR
 	exit
 	;;
-    "kfat1")
-	a-mount-kfat1
+    "u")
+	a-mount-u
 	exit
 	;;
     "devfs")
@@ -59,14 +60,20 @@ if [[ -z "$ARCHIVE_FILE" ]]; then
     ARCHIVES_DIR=$MISC_ARCHIVES_DIR
 fi
 
+# check
 if [[ -z "$ARCHIVE_FILE" ]]; then
     echo "Can not found $TARGET"
     exit
 fi
+# check
+AVAILABLE_COUNT=$(ls $ARCHIVES_DIR | grep -i $TARGET | wc -l)
+if [[ $AVAILABLE_COUNT != "1" ]]; then
+    echo There are more than one target: $ARCHIVE_FILE
+    exit
+fi
 
 ## Set up target
-cd $TMP_ROOT
-echo copy from $ARCHIVES_DIR/$ARCHIVE_FILE
+echo Setting up $ARCHIVE_FILE '(from' $ARCHIVES_DIR ')'
 # make use of cache
 cat $ARCHIVES_DIR/$ARCHIVE_FILE > /dev/null
-tar xf $ARCHIVES_DIR/$ARCHIVE_FILE && echo $ARCHIVE_FILE >> $SETUPED_FILE
+tar xf $ARCHIVES_DIR/$ARCHIVE_FILE -C $TMP_ROOT && echo $ARCHIVE_FILE >> $SETUPED_FILE
